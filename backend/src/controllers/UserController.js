@@ -4,9 +4,11 @@ const jwt = require('jsonwebtoken')
 
 module.exports = {
 	async createUser(req, res) {
+		console.log(req.body)
 		try {
 			const { email, firstName, lastName, password } = req.body
 			const existentUser = await User.findOne({ email })
+			const { filename } = req.file
 
 			if (!existentUser) {
 				const hashPassword = await bcrypt.hash(password, 10)
@@ -15,12 +17,15 @@ module.exports = {
 					firstName,
 					lastName,
 					password: hashPassword,
+					profilePic: filename
 				})
 
 				return jwt.sign({ user: userResponse }, 'secret', (err, token) => {
 					return res.json({
 						user: token,
-						user_id: userResponse._id
+						user_id: userResponse._id,
+						userName: userResponse.firstName + " " + userResponse.lastName,
+						profilePic: userResponse.profilePic
 					})
 				})
 			}else{

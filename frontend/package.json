@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://stgit.dcs.gla.ac.uk/tp3-2020-CS06/cs06-main/-/issues"
   },
-  "homepage": "https://stgit.dcs.gla.ac.uk/tp3-2020-CS06/cs06-main/-/blob/master/README.md",
+  "homepage": "/",
   "scripts": {
     "dev": "react-scripts start",
     "build": "react-scripts build",

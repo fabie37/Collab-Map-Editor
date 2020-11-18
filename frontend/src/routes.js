@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import Profile from './pages/Profile'
 import EventsPage from './pages/EventsPage'
 import TopNav from './components/TopNav'
 
@@ -15,6 +16,7 @@ export default function Routes() {
                 <Route path='/' exact component={Dashboard} /> 
                 <Route path='/login' exact component={Login} />
                 <Route path='/register' exact component={Register} />
+                <Route path='/user' exact component={Profile} />
                 <Route path='/events' component={EventsPage} /> 
             </Switch>
         </BrowserRouter>

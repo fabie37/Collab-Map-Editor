@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import api from '../../services/api'
 import { Alert, Container, Button, Form, FormGroup, Input } from 'reactstrap';
 import { UserContext } from '../../user-context'
@@ -9,17 +9,24 @@ export default function Login({ history }) {
     const [password, setPassword] = useState("")
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState("false")
+    const [profilePic, setProfilePic] = useState(null)
+
+
 
     const handleSubmit = async evt => {
         evt.preventDefault();
         const response = await api.post('/login', { email, password })
         const user_id = response.data.user_id || false;
         const user = response.data.user || false;
+        const userName = response.data.userName || false;
+        const profilePic = response.data.profilePic || false;
         
         try {
             if (user && user_id) {
                 localStorage.setItem('user', user)
                 localStorage.setItem('user_id', user_id)
+                localStorage.setItem('userName', userName)
+                localStorage.setItem('profilePic', profilePic)
                 setIsloggedIn(true)
                 history.push('/')
             } else {
@@ -41,13 +48,12 @@ export default function Login({ history }) {
         <Container>
             <h2>Login:</h2>
             <p>Please <strong>Login</strong> into your account</p>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} className="input-group">
                 <div className="input-group">
-                    <FormGroup className="form-group-"></FormGroup>
-                    <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                    <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                         <Input type="email" name="email" id="email" placeholder="Your email" onChange={evt => setEmail(evt.target.value)} />
                     </FormGroup>
-                    <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                    <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
                         <Input type="password" name="password" id="password" placeholder="Your password" onChange={evt => setPassword(evt.target.value)} />
                     </FormGroup>
                 </div>

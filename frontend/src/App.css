@@ -1,16 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,700;1,400&display=swap");
 
-* {
-    margin: 0;
-    padding: 0;
-    outline: 0;
-    box-sizing: border-box;
-}
 
 html,
 body,
 #root {
-    min-width: 100%;
+    width: 100%; 
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
 }
 
 body {
@@ -27,8 +24,6 @@ button {
 }
 
 .container {
-    margin: 80px auto;
-    max-width: 450px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -41,18 +36,26 @@ button {
 }
 
 .content {
-    width: 80%;
+    width: 100vw;
+}
+
+Form.input-group {
+    width: 40%;
     opacity: 0.8;
     background: #ffffff;
     margin-top: 50px;
     border-radius: 4px;
     padding: 30px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 50px;
 }
 
-.content > p {
-    font-size: 22px;
-    line-height: 30px;
-    margin-bottom: 30px;
+div.input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 50px;
 }
 
 .content button.submit-btn {
@@ -89,10 +92,4 @@ button {
 .content button.secondary-btn:hover {
     background: #286090;
     opacity: 1;
-}
-
-.content div.input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
 }

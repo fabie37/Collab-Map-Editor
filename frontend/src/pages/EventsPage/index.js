@@ -26,6 +26,8 @@ export default function EventsPage({ history }) {
         return thumbnail ? URL.createObjectURL(thumbnail) : null;
     }, [thumbnail])
 
+    console.log("preview: ", preview)
+
     const submitHandler = async (evt) => {
         evt.preventDefault()
 

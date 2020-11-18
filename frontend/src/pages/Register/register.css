@@ -1,0 +1,23 @@
+label#profilePic {
+    margin-bottom: 20px;
+    border: 1px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+}
+
+label#profilePic input {
+    display: none;
+}
+
+label#profilePic.has-profilePic {
+    border: 0;
+}
+
+label#profilePic.has-profilePic img {
+    display: none;
+}

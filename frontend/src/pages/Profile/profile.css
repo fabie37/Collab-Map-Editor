@@ -1,0 +1,16 @@
+img.profilePic {
+    width: 200px;
+}
+
+div.userName{
+    font-size: 24px;
+    color: rgb(80, 80, 80);
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 20px;
+}
+
+ul.profile{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

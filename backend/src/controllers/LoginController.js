@@ -21,13 +21,16 @@ module.exports = {
 					_id: user._id,
 					email: user.email,
 					firstName: user.firstName,
-					lastName: user.lastName
+					lastName: user.lastName,
+					profilePic: user.profilePic
 				}
 
 				return jwt.sign({ user: userResponse }, 'secret', (err, token) => {
 					return res.json({
 						user: token,
-						user_id: userResponse._id
+						user_id: userResponse._id,
+						userName: userResponse.firstName + " " + userResponse.lastName,
+						profilePic: userResponse.profilePic
 					})
 				})
 				// return res.json(userResponse)
