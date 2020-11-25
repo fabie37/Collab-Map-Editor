@@ -27,7 +27,8 @@ Dependencies werent pushed so you'll need to install them. If this is too cumber
 
  
 
-To download frontend dependencies, navigate to frontend folder in terminal and execute (one by one):
+To download frontend dependencies, navigate to frontend folder in terminal and execute (one by one)
+
 
 npm install axios
 npm install bootstrap
