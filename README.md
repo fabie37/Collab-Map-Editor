@@ -45,6 +45,8 @@ npm install ol
  
 
 To download backend dependencies, navigate to backend folder in terminal and execute (one by one)   
+
+
 npm install bcrypt   
 npm install cors  
 npm install dotenv  
