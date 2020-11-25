@@ -103,6 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+# YML GitLab Runner config file
+.gitlab-ci.yml
+
 files/
 
 .DS_Store
