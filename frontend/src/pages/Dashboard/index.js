@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import api from '../../services/api';
 import moment from 'moment';
-import { Button, ButtonGroup, Alert, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
+import { Button, ButtonGroup, Container, Alert, Dropdown, Nav, NavLink, 
+    DropdownItem, DropdownMenu, DropdownToggle, ListGroup, ListGroupItem, Card, CardBody, CardImg, CardTitle, CardSubtitle, CardText } from 'reactstrap';
 import socketio from 'socket.io-client';
 import './dashboard.css'
+import battle from '../../assets/battle.jpg'
 
 
 export default function Dashboard({ history }) {
@@ -15,9 +17,8 @@ export default function Dashboard({ history }) {
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false)
     const [messageHandler, setMessageHandler] = useState('')
-    const [dropdownOpen, setDropDownOpen] = useState(false)
-
-    const toggle = () => setDropDownOpen(!dropdownOpen);
+    const [browseMapsPanel, setBrowseMapsPanel] = useState(false)
+    const [myMapsPanel, setMyMapsPanel] = useState(false)
 
     useEffect(() => {
         getEvents()
@@ -78,11 +79,78 @@ export default function Dashboard({ history }) {
         }
     }
 
+    console.log("middle panel: ", browseMapsPanel)
+
+    const browseMapsFunc = async() => {
+        setBrowseMapsPanel(!browseMapsPanel)
+        if (myMapsPanel){
+            setMyMapsPanel(false)
+        }
+    }
+
+    const myMapsFunc = async() => {
+        setMyMapsPanel(!myMapsPanel)
+        if (browseMapsPanel){
+            setBrowseMapsPanel(false)
+        }
+    }
+
     return (
         <>
-            <ul className="home">
-                <div className="left-panel"> Hello from the left panel </div>
-            </ul>
+            <div className="left-panel">
+                <ListGroup>
+                    <Button id="testbutton" color="link" onClick={() => browseMapsFunc()}> Browse Maps </Button>
+                    <Button id="testbutton" color="link" onClick={() => myMapsFunc()}> My Maps </Button>
+                    <Button id="testbutton" color="link"> Shared with Me </Button>
+                    <Button id="testbutton" color="link"> Help </Button>
+                </ListGroup>
+            </div>
+            {
+                browseMapsPanel ? (
+                    <div className="mapPanel">
+                        <h2>Browse Maps</h2>
+                        <ul>
+                            <li className="map">
+                                <strong> Map </strong>
+                                <img src={battle} width="200"/>
+                                <span> Date </span>
+                                <span> Description </span>
+                            </li>
+
+                            <li className="map">
+                                <strong> Map </strong>
+                                <img src={battle} width="200"/>
+                                <span> Date </span>
+                                <span> Description </span>
+                            </li>
+                        </ul>
+                    </div>
+                ) : ""
+            }
+            {
+                myMapsPanel ? (
+                    <div className="mapPanel">
+                        <h2>My Maps</h2>
+                        <ul>
+                            <li className="map">
+                                <strong> Map </strong>
+                                <img src={battle} width="200"/>
+                                <span> Date </span>
+                                <span> Description </span>
+                            </li>
+
+                            <li className="map">
+                                <strong> Map </strong>
+                                <img src={battle} width="200"/>
+                                <span> Date </span>
+                                <span> Description </span>
+                            </li>
+                        </ul>
+                    </div>
+                ) : ""
+            }
+
+            
         </>
     )
 }

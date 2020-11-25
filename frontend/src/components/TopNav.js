@@ -3,6 +3,7 @@ import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, Na
 import { Link } from 'react-router-dom';
 import { UserContext } from '../user-context'
 import './TopNav.css'
+import logo from '../assets/logo.jpg'
 
 const TopNav = () => {
     const { isLoggedIn, setIsloggedIn } = useContext(UserContext);
@@ -19,7 +20,7 @@ const TopNav = () => {
         localStorage.removeItem('user_id')
         setIsloggedIn(false)
     }
-
+    console.log(window.location.origin)
     return isLoggedIn ? 
         <div>
 {/*             <Navbar color="faded" light>
@@ -36,9 +37,11 @@ const TopNav = () => {
                 </Nav>
                 <Link to="/login" onClick={logoutHandler}>Logout</Link>
             </Navbar> */}
+            
 
             <Navbar color="light" light expand="md">
-                <NavbarBrand href="/">CISmap</NavbarBrand>
+                <img className="logo" src={logo}/>
+                <NavbarBrand href="/"> CISmap (Working title) </NavbarBrand>
                 <NavbarToggler onClick={toggle} />
                 <Collapse isOpen={isOpen} navbar>
                     <Nav navbar className="container-fluid">
@@ -48,7 +51,7 @@ const TopNav = () => {
                             </DropdownToggle>
                             <DropdownMenu right>
                                 <DropdownItem>
-                                    <NavLink href="/user">Profile</NavLink>
+                                    <NavLink href="/profile">Profile</NavLink>
                                 </DropdownItem>
                                 <DropdownItem divider />
                                 <DropdownItem>

@@ -1,5 +1,18 @@
 img.profilePic {
     width: 200px;
+    border-radius: 20px;
+}
+
+div.profilePic {
+    display: inline-block;
+    max-width: 200px;
+    
+}
+
+div.userNameContainer {
+    display: inline-block;
+    width: 400px;
+    vertical-align: top;
 }
 
 div.userName{
@@ -11,6 +24,14 @@ div.userName{
 }
 
 ul.profile{
-    margin-top: 20px;
-    margin-bottom: 20px;
+    width: 60vw;
+    opacity: 0.8;
+    background: #ffffff;
+    margin-top: 50px;
+    border-radius: 4px;
+    padding: 30px;
+    display: inline-block;
+    flex-direction: column;
+    margin-bottom: 50px;
 }
+
