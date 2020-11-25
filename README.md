@@ -42,7 +42,6 @@ npm install socket.io-client
 npm install web-vitals  
 npm install ol  
 
- 
 
 To download backend dependencies, navigate to backend folder in terminal and execute (one by one)   
 
@@ -51,11 +50,13 @@ npm install bcrypt
 npm install cors  
 npm install dotenv  
 npm install express  
-npm install jsonwebtoken  
+npm install jsonwebtoken     
 npm install mongoose  
 npm install nodemon  
 npm install multer  
 npm install socket.io  
+
+
 ---
 ## Usage
 >
