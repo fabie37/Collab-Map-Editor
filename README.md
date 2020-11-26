@@ -1,6 +1,7 @@
 # CS06 Main
 ## Description
 >
+Project is a web service for the UoG School of Arts. It is a historical mapping tool focused on student collaboration.
 ---
 ## Installation
 >
@@ -11,7 +12,7 @@ You'll need a mongodb account set up with a cluster to use it and a file called 
 The ".env" file has to contain the following:  
  
 SESSION_SECRET=secret  
-MONGO_DB_CONNECTION=<the link you get from your mongodb cluster under connect menu>  
+MONGO_DB_CONNECTION={the link you get from your mongodb cluster under connect menu}
 
  
 
