@@ -35,6 +35,9 @@ export default function TopNav() {
                 if(selected === "home"){
                     history.push("/") 
                 }
+                if(selected === "map"){
+                    history.push("/mapeditor") 
+                }
                 
             }
         }}>
@@ -98,6 +101,15 @@ export default function TopNav() {
                             My Maps
                         </NavText>
                     </NavItem>
+                </NavItem>
+
+                <NavItem eventKey="map" id="NavItem">
+                    <NavIcon>
+                        <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
+                    </NavIcon>
+                    <NavText id="NavText">
+                        Map Prototype
+                    </NavText>
                 </NavItem>
             </SideNav.Nav>
         </SideNav>

@@ -2,6 +2,7 @@ import React, { useState, useContext, useMemo } from 'react';
 import api from '../../services/api'
 import { Alert, Container, Button, Form, FormGroup, Input } from 'reactstrap';
 import { UserContext } from '../../user-context'
+import './login.css'
 
 export default function Login({ history }) {
     const { setIsloggedIn } = useContext(UserContext);
@@ -46,6 +47,7 @@ export default function Login({ history }) {
 
     return (
         <Container>
+            <div className="content_login">
             <h2>Login:</h2>
             <p>Please <strong>Login</strong> into your account</p>
             <Form onSubmit={handleSubmit} className="input-group">
@@ -67,6 +69,7 @@ export default function Login({ history }) {
             {error ? (
                 <Alert className="event-validation" color="danger"> {errorMessage}</Alert>
             ) : ""}
+            </div>
         </Container>
     );
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import api from '../../services/api';
 import moment from 'moment';
-import { Button, ButtonGroup, Alert, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
+import { Button, ButtonGroup, Alert, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Container } from 'reactstrap';
 import socketio from 'socket.io-client';
 import './dashboard.css'
 
@@ -145,22 +145,8 @@ export default function Dashboard({ history }) {
 
     return (
         <>
-            <ul className="notifications">
-                {eventsRequest.map(request => {
-                    return (
-                        <li key={request._id}>
-                            <div>
-                                <strong>{request.user.email} </strong> is requesting to register to your Event <strong>{request.event.title}</strong>
-                            </div>
-                            <ButtonGroup>
-                                <Button color="secondary" onClick={() => acceptEventHandler(request._id)}>Accept</Button>
-                                <Button color="danger" onClick={() => rejectEventHandler(request._id)}>Reject</Button>
-                            </ButtonGroup>
-                        </li>
-                    )
-                })}
-            </ul>
-            {eventRequestSuccess ? <Alert color="success"> {eventRequestMessage}</Alert> : ""}
+            <Container>
+            <div className="content">
             <div className="filter-panel">
                 <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                     <DropdownToggle color="primary" caret>
@@ -200,6 +186,8 @@ export default function Dashboard({ history }) {
                     <Alert className="event-validation" color="success"> {messageHandler}</Alert>
                 ) : ""
             }
+            </div>
+            </Container>
         </>
     )
 }

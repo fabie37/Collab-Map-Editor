@@ -7,11 +7,7 @@ import './App.css';
 function App() {
   return (
     <ContextWrapper>
-      <Container>
-        <div className="content">
           <Routes />
-        </div>
-      </Container>
     </ContextWrapper>
   );
 }

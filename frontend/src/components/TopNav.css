@@ -6,9 +6,6 @@ UncontrolledDropdown {
     background: rgba(255, 255, 255, 0.801);
 }
 
-#SideNavToggle {
-}
-
 #SideNavToggle span {
     /* This is the styling for the toggle button on sidebar */
     background-color: rgb(0, 0, 0);
