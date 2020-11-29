@@ -44,6 +44,7 @@ npm install react-scripts
 npm install socket.io-client  
 npm install web-vitals  
 npm install ol  
+npm install --save react @trendmicro/react-sidenav
 
 
 To download backend dependencies, navigate to backend folder in terminal and execute (one by one)   
