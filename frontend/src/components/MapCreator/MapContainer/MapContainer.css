@@ -1,0 +1,16 @@
+.map-container {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: 20fr 4fr;
+
+}
+
+.storyboard {
+    grid-row-start: 1;
+    grid-row-end: 3;
+    grid-column-start: 11;
+    grid-column-end: 13;
+    background-color: rgb(248, 248, 248);
+    z-index: 99;
+}

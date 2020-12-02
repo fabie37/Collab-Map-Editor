@@ -5,6 +5,7 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import EventsPage from './pages/EventsPage'
+import MapEditor from './pages/MapEditor'
 import TopNav from './components/TopNav'
 
 
@@ -16,8 +17,9 @@ export default function Routes() {
                 <Route path='/' exact component={Dashboard} /> 
                 <Route path='/login' exact component={Login} />
                 <Route path='/register' exact component={Register} />
-                <Route path='/user' exact component={Profile} />
+                <Route path='/profile' exact component={Profile} />
                 <Route path='/events' component={EventsPage} /> 
+                <Route path='/mapeditor' component={MapEditor} />
             </Switch>
         </BrowserRouter>
     );

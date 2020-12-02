@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import api from '../../services/api';
 import moment from 'moment';
-import { Button, ButtonGroup, Alert, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
+import { Button, ButtonGroup, Alert, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Container } from 'reactstrap';
 import socketio from 'socket.io-client';
 import userContext from '../../user-context'
 import './profile.css'
@@ -11,8 +11,8 @@ export default function Profile({ history }) {
     const [events, setEvents] = useState([])
     const user = localStorage.getItem('user')
     const user_id = localStorage.getItem('user_id')
-    const userName = localStorage.getItem('userName')
-    const profilePic = localStorage.getItem('profilePic')
+    const [userName, setUserName] = useState('')
+    const [profilePic, setProfilePic] = useState('')
 
     const [rSelected, setRSelected] = useState(null)
     const [error, setError] = useState(false);
@@ -23,7 +23,7 @@ export default function Profile({ history }) {
     const toggle = () => setDropDownOpen(!dropdownOpen);
 
     useEffect(() => {
-        getUserDetails()
+        getUserDetails(user_id)
     }, [])
 
     const socket = useMemo(
@@ -35,35 +35,42 @@ export default function Profile({ history }) {
     const getUserDetails = async (user_id) => {
         
         try {
-            const url = user_id ? `/user/${user_id}` : '/user';
-            const response = await api.get(`/user/${user_id}`)
+            const url = user_id ? `/profile/${user_id}` : '/profile';
+            const response = await api.get(`/profile/${user_id}`)
             console.log("response: ", response.data)
-            //const response = await api.get(url, { headers: { user } })
-            //setUserName(response.user.firstName)
+            console.log("USERNAME SHOULD BE: ", response.data.firstName + " " + response.data.lastName)
+            setUserName(response.data.firstName + " " + response.data.lastName)
+            setProfilePic(response.data.profilePic_url)
         } catch (error) {
-            //history.push('/login');
+            history.push('/login');
         }
 
     };
 
-    const imgsrc = "http://localhost:8000/files/" + profilePic
+    const imgsrc = profilePic
 
     return (
         <>
-            <ul className="profile">
-                <img className="profilePic" src={imgsrc}/>
-                <div className="userName"> <strong>Name: </strong> { userName } </div> 
-            </ul>
-            {
-                error ? (
-                    <Alert className="event-validation" color="danger"> {messageHandler} </Alert>
-                ) : ""
-            }
-            {
-                success ? (
-                    <Alert className="event-validation" color="success"> {messageHandler}</Alert>
-                ) : ""
-            }
+            <Container>
+                <ul className="profile">
+                    <div class="profilePic">
+                        <img className="profilePic" src={imgsrc}/>
+                    </div>
+                    <div class="userNameContainer">
+                        <div className="userName"> <strong>Name: </strong> { userName } </div> 
+                    </div>
+                </ul>
+                {
+                    error ? (
+                        <Alert className="event-validation" color="danger"> {messageHandler} </Alert>
+                    ) : ""
+                }
+                {
+                    success ? (
+                        <Alert className="event-validation" color="success"> {messageHandler}</Alert>
+                    ) : ""
+                }
+            </Container>
         </>
     )
 }

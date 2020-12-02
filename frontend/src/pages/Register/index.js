@@ -72,6 +72,7 @@ export default function Register({ history }) {
 
     return (
         <Container>
+            <div className="content_login">
             <h2>Register:</h2>
             <p>Please <strong>Register</strong> for a new account</p>
             <Form onSubmit={handleSubmit} className="input-group">
@@ -106,6 +107,7 @@ export default function Register({ history }) {
             {error ? (
                 <Alert className="event-validation" color="danger">{errorMessage}</Alert>
             ) : ""}
+            </div>
         </Container>
     );
 }

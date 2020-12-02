@@ -40,5 +40,6 @@ routes.delete('/event/:eventId',verifyToken, EventController.delete)
 //User
 routes.post('/user/register', upload.single('profilePic'), UserController.createUser)
 routes.get('/user/:userId', UserController.getUserById)
+routes.get('/profile/:userId', UserController.getUserById)
 
 module.exports = routes

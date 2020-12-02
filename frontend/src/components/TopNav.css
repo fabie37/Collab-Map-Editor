@@ -1,3 +1,57 @@
 UncontrolledDropdown {
     float: right;
 }
+
+#SideNav{
+    background: rgba(255, 255, 255, 0.801);
+}
+
+#SideNavToggle span {
+    /* This is the styling for the toggle button on sidebar */
+    background-color: rgb(0, 0, 0);
+}
+
+#NavText {
+    color: black;
+}
+
+#NavTextSub {
+    color: black;
+    margin-left: 50px;
+}
+
+#NavTextLogo {
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+    font: bolder;
+}
+
+#NavItem {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+#NavItem:hover {
+    background-color: rgba(99, 85, 85, 0.199);
+}
+
+#NavItemLogo:hover {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+div#NavItem.sidenav---navitem---9uL5T::after{  
+  background: rgba(155, 6, 6, 0);
+  color: rgb(255, 2, 2);
+  background-color: rgb(121, 0, 121);
+  opacity: 0.0;
+  cursor: pointer;
+}
+
+
+img.logo{
+    width: 50px;
+    border-radius: 25px;
+    align-items: center;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
