@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const NodeSchema = new mongoose.Schema({
-    layer: {
+    node_layer_id: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Layer'
 	},
