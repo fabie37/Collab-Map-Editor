@@ -8,9 +8,11 @@ export default function CreateMap({ history }) {
     const [map_title, setMapTitle] = useState('')
     const [map_type, setMapType] = useState('')
     const [is_public, setIsPublic] = useState(false)
+
     const [thumbnail, setThumbnail] = useState(null)
     const [sport, setSport] = useState('Sport')
     const [date, setDate] = useState('')
+    
     const [error, setError] = useState(false)
     const [success, setSuccess] = useState(false)
     const [dropdownOpen, setOpen] = useState(false);
@@ -59,6 +61,11 @@ export default function CreateMap({ history }) {
         }
     }
 
+    const isPublicHandler = async (evt) => {
+        setIsPublic(!is_public)
+    }
+    
+
     return (
         <Container>
             <div className="panel">
@@ -75,11 +82,11 @@ export default function CreateMap({ history }) {
                     </FormGroup>
                     <FormGroup check>
                         <Label check>
-                        <Input type="checkbox" />{' '}
-                            Check me out
+                        <Input type="checkbox" onChange={isPublicHandler}/>{' '}
+                            Do you want your map to be public?
                         </Label>
                         <div>
-                            <CustomInput type="switch" id="exampleCustomSwitch" name="customSwitch" label="Turn on this custom switch" />
+                            <CustomInput type="switch" id="exampleCustomSwitch" name="customSwitch" label="This doesnt do anything, I was just experimenting" />
                         </div>
                     </FormGroup>
                 </div>

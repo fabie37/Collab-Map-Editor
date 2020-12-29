@@ -58,15 +58,13 @@ module.exports = {
 	},
 
 	getAllMaps(req, res) {
-		console.log("backend debug1")
 		jwt.verify(req.token, 'secret', async (err, authData) => {
-			console.log("backend debug2")
 			if (err) {
 				res.sendStatus(401)
 			} else {
-				console.log("backend debug3")
+				console.log("backend debug 1")
 				const maps = await Map.find()
-
+				console.log(maps)
 				return res.json({ authData, maps })
 			}
 		})
