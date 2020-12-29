@@ -24,12 +24,12 @@ routes.get('/status', (req, res) => {
 })
 
 //Map
-routes.post('/map',verifyToken, MapController.createMap)
+routes.post('/createmap',verifyToken, MapController.createMap)
 routes.get('/map/:map_id', verifyToken, MapController.getMapById)
 routes.delete('/map/:map_id',verifyToken, MapController.delete)
 
 //Map Browser
-routes.post('/mapbrowser',verifyToken, MapController.createMap)
+routes.get('/mapbrowser',verifyToken, MapController.getAllMaps)
 routes.get('/mapbrowser/:map_id', verifyToken, MapController.getMapById)
 routes.delete('/mapbrowser/:map_id',verifyToken, MapController.delete)
 

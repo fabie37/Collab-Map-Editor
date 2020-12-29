@@ -7,7 +7,7 @@ import './mapbrowser.css'
 
 
 export default function MapBrowser({ history }) {
-    const [events, setEvents] = useState([])
+    const [maps, setMaps] = useState([])
     const user = localStorage.getItem('user')
     const user_id = localStorage.getItem('user_id')
 
@@ -23,7 +23,7 @@ export default function MapBrowser({ history }) {
     const toggle = () => setDropDownOpen(!dropdownOpen);
 
     useEffect(() => {
-        getEvents()
+        getMaps()
     }, [])
 
     const socket = useMemo(
@@ -32,32 +32,31 @@ export default function MapBrowser({ history }) {
         [user_id]
     );
 
-    useEffect(() => {
-        socket.on('registration_request', data => setEventsRequest([...eventsRequest, data]));
-    }, [eventsRequest, socket])
-
     const filterHandler = (query) => {
         setRSelected(query)
-        getEvents(query)
+        getMaps(query)
     }
 
     const myEventsHandler = async () => {
         try {
             setRSelected('myevents')
             const response = await api.get('/user/events', { headers: { user } })
-            setEvents(response.data.events)
+            setMaps(response.data.events)
         } catch (error) {
             history.push('/login');
         }
 
     }
 
-    const getEvents = async (filter) => {
+    const getMaps = async (filter) => {
+        console.log("debug1")
         try {
-            const url = filter ? `/dashboard/${filter}` : '/dashboard';
+            const url = filter ? `/mapbrowser/${filter}` : '/mapbrowser';
+            console.log("debug2")
             const response = await api.get(url, { headers: { user } })
+            console.log("debug3")
 
-            setEvents(response.data.events)
+            setMaps(response.data.maps)
         } catch (error) {
             history.push('/login');
         }
@@ -104,16 +103,10 @@ export default function MapBrowser({ history }) {
                 </Dropdown>
             </div>
             <ul className="events-list">
-                {events.map(event => (
-                    < li key={event._id} >
-                        <header style={{ backgroundImage: `url(${event.thumbnail_url})` }}>
-                            {event.user === user_id ? <div><Button color="danger" size="sm" onClick={() => deleteEventHandler(event._id)}>Delete</Button></div> : ""}
-
-                        </header>
-                        <strong>{event.title}</strong>
-                        <span>Event Date: {moment(event.date).format('l')}</span>
-                        <span>Event Price: {parseFloat(event.price).toFixed(2)}</span>
-                        <span>Event Description: {event.description}</span>
+                {maps.map(map => (
+                    < li key={map._id} >
+                        <strong>{map.map_title}</strong>
+                        <span>Event Date: {moment(map.map_type)}</span>
                     </li>
                 ))}
             </ul>

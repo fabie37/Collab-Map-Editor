@@ -1,5 +1,6 @@
 const Node = require('../models/Node')
 const Layer = require('../models/Layer')
+const Map = require('../models/Map')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 
@@ -10,7 +11,7 @@ module.exports = {
 			if (err) {
 				res.statusCode(401)
 			} else {
-				const { map_layers, map_type, is_public } = req.body
+				const { map_title, map_layers, map_type, is_public } = req.body
                 
                 const map_user_id = await User.findById(authData.user._id)
 
@@ -20,8 +21,9 @@ module.exports = {
 
 				try {
 					const map = await Map.create({
-                        map_user_id: authData.user._id,
-                        map_layers, 
+						map_user_id: authData.user._id,
+						map_title,
+                        map_layers : [], 
                         map_type, 
                         is_public
 					})
@@ -52,6 +54,21 @@ module.exports = {
 				}
 			}
 
+		})
+	},
+
+	getAllMaps(req, res) {
+		console.log("backend debug1")
+		jwt.verify(req.token, 'secret', async (err, authData) => {
+			console.log("backend debug2")
+			if (err) {
+				res.sendStatus(401)
+			} else {
+				console.log("backend debug3")
+				const maps = await Map.find()
+
+				return res.json({ authData, maps })
+			}
 		})
 	},
 
