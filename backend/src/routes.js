@@ -5,6 +5,10 @@ const verifyToken = require('./config/verifyToken')
 const UserController = require('./controllers/UserController')
 const DashboardController = require('./controllers/DashboardController')
 const LoginController = require('./controllers/LoginController')
+const EventController = require('./controllers/EventController')
+const SubscriptionController = require('./controllers/SubscriptionController')
+const ApprovalController = require('./controllers/ApprovalController')
+const RejectionController = require('./controllers/RejectionController')
 const MapController = require('./controllers/MapController')
 const NodeController = require('./controllers/NodeController')
 const LayerController = require('./controllers/LayerController')
@@ -19,15 +23,22 @@ routes.get('/status', (req, res) => {
 	res.send({ status: 200 })
 })
 
-//Map, Node, Layer
+//Map
 routes.post('/map',verifyToken, MapController.createMap)
 routes.get('/map/:map_id', verifyToken, MapController.getMapById)
 routes.delete('/map/:map_id',verifyToken, MapController.delete)
 
+//Map Browser
+routes.post('/mapbrowser',verifyToken, MapController.createMap)
+routes.get('/mapbrowser/:map_id', verifyToken, MapController.getMapById)
+routes.delete('/mapbrowser/:map_id',verifyToken, MapController.delete)
+
+//Node
 routes.post('/node',verifyToken, NodeController.createNode)
 routes.get('/node/:node_id', verifyToken, NodeController.getNodeById)
 routes.delete('/node/:node_id',verifyToken, NodeController.delete)
 
+//Layer
 routes.post('/layer',verifyToken, LayerController.createLayer)
 routes.get('/layer/:layer_id', verifyToken, LayerController.getLayerById)
 routes.delete('/layer/:layer_id',verifyToken, LayerController.delete)
@@ -45,6 +56,9 @@ routes.get('/dashboard/:sport', verifyToken, DashboardController.getAllEvents)
 routes.get('/dashboard', verifyToken, DashboardController.getAllEvents)
 routes.get('/user/events', verifyToken, DashboardController.getEventsByUserId)
 routes.get('/event/:eventId', verifyToken, DashboardController.getEventById)
+
+
+//###################################################################################################################
 
 //Events - DEPRECATED leftover from another project, will be removed!
 routes.post('/event',verifyToken, upload.single('thumbnail'), EventController.createEvent)

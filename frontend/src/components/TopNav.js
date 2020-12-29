@@ -38,6 +38,9 @@ export default function TopNav() {
                 if(selected === "map"){
                     history.push("/mapeditor") 
                 }
+                if(selected === "maps/browse"){
+                    history.push("/mapbrowser")
+                }
                 
             }
         }}>
