@@ -1,5 +1,9 @@
 const mongoose = require('mongoose')
 
+//************************************************************************************************* */
+// DEPRECATED - leftover from another project, will be removed, use only as a code template!!!
+//************************************************************************************************* */
+
 const EventSchema = new mongoose.Schema({
 	title: String,
 	description: String,

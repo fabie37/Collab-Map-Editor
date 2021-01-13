@@ -7,6 +7,8 @@ import Profile from './pages/Profile'
 import EventsPage from './pages/EventsPage'
 import MapEditor from './pages/MapEditor'
 import TopNav from './components/TopNav'
+import MapBrowser from './pages/MapBrowser'
+import CreateMap from './pages/CreateMap'
 
 
 export default function Routes() {
@@ -18,6 +20,8 @@ export default function Routes() {
                 <Route path='/login' exact component={Login} />
                 <Route path='/register' exact component={Register} />
                 <Route path='/profile' exact component={Profile} />
+                <Route path='/mapbrowser' exact component={MapBrowser} />
+                <Route path='/createmap' exact component={CreateMap} />
                 <Route path='/events' component={EventsPage} /> 
                 <Route path='/mapeditor' component={MapEditor} />
             </Switch>
