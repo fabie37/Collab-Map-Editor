@@ -1,28 +1,38 @@
 import React from 'react';
+import AddTool from '../Tools/AddTool';
+import RemoveTool from '../Tools/RemoveTool';
+import MoveTool from '../Tools/MoveTool';
 import './ToolBar.css';
 
-function ToolBar({ setTool }) {
+function ToolBar({
+    setTool,
+    map,
+    toolBarState,
+    addNode,
+    removeNode,
+    nodes,
+    onNode,
+}) {
     return (
         <div className='toolbar'>
-            <button className='toolbar-btn' id='addTool' onClick={setTool}>
-                Add
-            </button>
-            <button
-                className='toolbar-btn'
-                type='button'
-                id='removeTool'
+            <AddTool
+                map={map}
                 onClick={setTool}
-            >
-                Remove
-            </button>
-            <button
-                className='toolbar-btn'
-                type='button'
-                id='moveTool'
+                toolBarState={toolBarState}
+                addNode={addNode}
+            ></AddTool>
+            <RemoveTool
+                map={map}
                 onClick={setTool}
-            >
-                Move
-            </button>
+                toolBarState={toolBarState}
+                removeNode={removeNode}
+            ></RemoveTool>
+            <MoveTool
+                map={map}
+                onClick={setTool}
+                toolBarState={toolBarState}
+                onNode={onNode}
+            ></MoveTool>
         </div>
     );
 }
