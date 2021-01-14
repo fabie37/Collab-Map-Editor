@@ -1,19 +1,23 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const routes = require('./routes');
-const path = require('path');
-const http = require('http');
-const socketio = require('socket.io');
-const dotenv = require('dotenv').config({ path: __dirname + '/.env' });
+const express = require('express')
+const mongoose = require('mongoose')
+const cors = require('cors')
+const routes = require('./routes')
+const path = require('path')
+const http = require('http')
+const socketio = require('socket.io')
+const PORT = process.env.PORT || 8000
 
-// Load enviroment variables
 
-const PORT = process.env.PORT || 8000;
-console.log(process.env.MONGO_DB_CONNECTION);
-const app = express();
-const server = http.Server(app);
-const io = socketio(server);
+
+
+const app = express()
+const server = http.Server(app)
+const io = require('socket.io')(server, {
+	cors: {
+	  origin: '*',
+	}
+  });
+
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
