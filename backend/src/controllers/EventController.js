@@ -2,6 +2,12 @@ const Event = require('../models/Event')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 
+
+//************************************************************************************************* */
+// DEPRECATED - leftover from another project, will be removed, use only as a code template!!!
+//************************************************************************************************* */
+
+
 module.exports = {
 	createEvent(req, res) {
 		jwt.verify(req.token, 'secret', async (err, authData) => {

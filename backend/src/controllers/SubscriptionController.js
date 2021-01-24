@@ -1,6 +1,16 @@
 const Subscription = require('../models/Subscription')
 const jwt = require('jsonwebtoken')
 
+
+
+
+//************************************************************************************************* */
+// DEPRECATED - leftover from another project, will be removed, use only as a code template!!!
+//************************************************************************************************* */
+
+
+
+
 module.exports = {
 	create(req, res) {
 		jwt.verify(req.token, 'secret', async (err, authData) => {

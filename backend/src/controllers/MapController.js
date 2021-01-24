@@ -62,9 +62,7 @@ module.exports = {
 			if (err) {
 				res.sendStatus(401)
 			} else {
-				console.log("backend debug 1")
-				const maps = await Map.find()
-				console.log(maps)
+				const maps = await Map.find({})
 				return res.json({ authData, maps })
 			}
 		})

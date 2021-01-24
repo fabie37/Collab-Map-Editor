@@ -9,8 +9,10 @@ export default function CreateMap({ history }) {
     const [map_type, setMapType] = useState('')
     const [is_public, setIsPublic] = useState(false)
 
-
     const [thumbnail, setThumbnail] = useState(null)
+    const [sport, setSport] = useState('Sport')
+    const [date, setDate] = useState('')
+    
     const [error, setError] = useState(false)
     const [success, setSuccess] = useState(false)
     const [dropdownOpen, setOpen] = useState(false);
@@ -41,11 +43,11 @@ export default function CreateMap({ history }) {
 
         try {
             if (map_title !== "" && map_type !== "") {
-                await api.post("/createmap", {map_title, map_type, is_public}, { headers: { user } })
+                await api.post("/createmap", mapData, { headers: { user } })
                 setSuccess(true)
                 setTimeout(() => {
                     setSuccess(false)
-                    history.push("/mapbrowser")
+                    history.push("/")
                 }, 2000)
             } else {
                 setError(true)
@@ -57,14 +59,6 @@ export default function CreateMap({ history }) {
             Promise.reject(error);
             console.log(error);
         }
-    }
-
-    const titleHandler = async (evt) => {
-        setMapTitle(evt.target.value)
-    }
-
-    const typeHandler = async (evt) => {
-        setMapType(evt.target.value)
     }
 
     const isPublicHandler = async (evt) => {
@@ -80,11 +74,11 @@ export default function CreateMap({ history }) {
                 <div className="input-group">
                     <FormGroup>
                         <Label>Title: </Label>
-                        <Input id="title" type="text" value={map_title} placeholder={'Map Title'} onChange={(evt) => titleHandler(evt)} />
+                        <Input id="title" type="text" value={map_title} placeholder={'Map Title'} onChange={(evt) => setMapTitle(evt.target.value)} />
                     </FormGroup>
                     <FormGroup>
                         <Label>Type: </Label>
-                        <Input id="description" type="text" value={map_type} placeholder={'Map Type'} onChange={(evt) => typeHandler(evt)} />
+                        <Input id="description" type="text" value={map_type} placeholder={'Map Type'} onChange={(evt) => setMapType(evt.target.value)} />
                     </FormGroup>
                     <FormGroup check>
                         <Label check>
@@ -100,7 +94,7 @@ export default function CreateMap({ history }) {
                     <Button className="submit-btn">Submit</Button>
                 </FormGroup>
                 <FormGroup>
-                    <Button className="secondary-btn" onClick={() => history.push("/mapbrowser")}>
+                    <Button className="secondary-btn" onClick={() => history.push("/")}>
                         Cancel
                     </Button>
                 </FormGroup>

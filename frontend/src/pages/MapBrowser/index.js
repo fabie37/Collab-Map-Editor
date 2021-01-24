@@ -56,7 +56,7 @@ export default function MapBrowser({ history }) {
             const response = await api.get(url, { headers: { user } })
             console.log("debug3")
             console.log(response.data.maps[0])
-            setMaps([response.data.maps[0]])
+            setMaps(response.data.maps)
         } catch (error) {
             history.push('/login');
         }
