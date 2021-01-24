@@ -4,10 +4,18 @@ import { Alert, Container, CustomInput, Button, Form, FormGroup, Input, Label, D
 import cameraIcon from '../../assets/camera.png'
 import "./createmap.css";
 
-export default function CreateMap({ history }) {
-    const [map_title, setMapTitle] = useState('')
-    const [map_type, setMapType] = useState('')
-    const [is_public, setIsPublic] = useState(false)
+export default function CreateNode({ history }) {
+    // ATTRIBUTES ***********************************//
+    const [node_title, set_node_title] = useState('')
+    const [node_layer_id, set_node_layer_id] = useState('')
+    //const [node_user_id, set_node_user_id] = useState('')
+    const [node_category, set_node_category] = useState('')
+    const [connected_nodes, set_connected_nodes] = useState([])
+    const [node_coordinates, set_node_coordinates] = useState([])
+    const [node_start_date, set_node_start_date] = useState('')
+    const [node_end_date, set_node_end_date] = useState('')
+    const [node_description, set_node_description] = useState('')
+    // ATTRIBUTES ***********************************//
 
 
     const [thumbnail, setThumbnail] = useState(null)
@@ -32,16 +40,9 @@ export default function CreateMap({ history }) {
     const submitHandler = async (evt) => {
         evt.preventDefault()
 
-        const mapData = new FormData();
-
-        mapData.append("map_title", map_title)
-        mapData.append("map_type", map_type)
-        mapData.append("is_public", is_public)
-
-
         try {
-            if (map_title !== "" && map_type !== "") {
-                await api.post("/createmap", {map_title, map_type, is_public}, { headers: { user } })
+            if (node_layer_id !== "") {
+                await api.post("/createnode", {node_title, node_layer_id, node_category, node_description, node_start_date, node_end_date}, { headers: { user } })
                 setSuccess(true)
                 setTimeout(() => {
                     setSuccess(false)
@@ -58,43 +59,44 @@ export default function CreateMap({ history }) {
             console.log(error);
         }
     }
-
-    const titleHandler = async (evt) => {
-        setMapTitle(evt.target.value)
-    }
-
-    const typeHandler = async (evt) => {
-        setMapType(evt.target.value)
-    }
-
-    const isPublicHandler = async (evt) => {
-        setIsPublic(!is_public)
-    }
     
-
     return (
         <Container>
             <div className="panel">
             <h2>Create your Map</h2>
             <Form onSubmit={submitHandler}>
                 <div className="input-group">
+
                     <FormGroup>
-                        <Label>Title: </Label>
-                        <Input id="title" type="text" value={map_title} placeholder={'Map Title'} onChange={(evt) => titleHandler(evt)} />
+                        <Label>Node title: </Label>
+                        <Input id="title" type="text" value={node_title} placeholder={''} onChange={(evt) => set_node_title(evt.target.value)} />
                     </FormGroup>
+
                     <FormGroup>
-                        <Label>Type: </Label>
-                        <Input id="description" type="text" value={map_type} placeholder={'Map Type'} onChange={(evt) => typeHandler(evt)} />
+                        <Label>Node layer id (this will eventually be set automatically): </Label>
+                        <Input id="layerid" type="text" value={node_layer_id} placeholder={'Map Title'} onChange={(evt) => set_node_layer_id(evt.target.value)} />
                     </FormGroup>
-                    <FormGroup check>
-                        <Label check>
-                        <Input type="checkbox" onChange={isPublicHandler}/>{' '}
-                            Do you want your map to be public?
-                        </Label>
-                        <div>
-                            <CustomInput type="switch" id="exampleCustomSwitch" name="customSwitch" label="This doesnt do anything, I was just experimenting" />
-                        </div>
+
+                    <FormGroup>
+                        <Label>Node category (this will eventually be a dropdown with preset types): </Label>
+                        <Input id="category" type="text" value={node_category} placeholder={'Map Type'} onChange={(evt) => set_node_category(evt.target.value)} />
                     </FormGroup>
+
+                    <FormGroup>
+                        <Label>Node description: </Label>
+                        <Input id="description" type="text" value={node_description} placeholder={'Map Title'} onChange={(evt) => set_node_description(evt.target.value)} />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label>Node start date:</Label>
+                        <Input id="date" type="date" value={node_start_date} onChange={(evt) => set_node_start_date(evt.target.value)} /> 
+                    </FormGroup>
+                    
+                    <FormGroup>
+                        <Label>Node end date:</Label>
+                        <Input id="date" type="date" value={node_end_date} onChange={(evt) => set_node_end_date(evt.target.value)} /> 
+                    </FormGroup>
+
                 </div>
                 <FormGroup>
                     <Button className="submit-btn">Submit</Button>

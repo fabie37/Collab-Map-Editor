@@ -8,8 +8,11 @@ import EventsPage from './pages/EventsPage'
 import MapEditor from './pages/MapEditor'
 import TopNav from './components/TopNav'
 import MapBrowser from './pages/MapBrowser'
+import LayerBrowser from './pages/LayerBrowser'
+import NodeBrowser from './pages/NodeBrowser'
 import CreateMap from './pages/CreateMap'
 import CreateLayer from './pages/CreateLayer'
+import CreateNode from './pages/CreateNode'
 
 
 export default function Routes() {
@@ -22,8 +25,11 @@ export default function Routes() {
                 <Route path='/register' exact component={Register} />
                 <Route path='/profile' exact component={Profile} />
                 <Route path='/mapbrowser' exact component={MapBrowser} />
+                <Route path='/layerbrowser' exact component={LayerBrowser} />
+                <Route path='/nodebrowser' exact component={NodeBrowser} />
                 <Route path='/createmap' exact component={CreateMap} />
                 <Route path='/createlayer' exact component={CreateLayer} />
+                <Route path='/createnode' exact component={CreateNode} />
                 <Route path='/events' component={EventsPage} /> 
                 <Route path='/mapeditor' component={MapEditor} />
             </Switch>

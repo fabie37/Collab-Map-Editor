@@ -34,13 +34,15 @@ routes.get('/mapbrowser/:map_id', verifyToken, MapController.getMapById)
 routes.delete('/mapbrowser/:map_id',verifyToken, MapController.delete)
 
 //Node
-routes.post('/node',verifyToken, NodeController.createNode)
-routes.get('/node/:node_id', verifyToken, NodeController.getNodeById)
+routes.post('/createnode',verifyToken, NodeController.createNode)
+routes.post('/nodebrowser', verifyToken, NodeController.getNodeByLayerId)
+// routes.get('/node/:node_id', verifyToken, NodeController.getNodeById)
 routes.delete('/node/:node_id',verifyToken, NodeController.delete)
 
 //Layer
 routes.post('/createlayer',verifyToken, LayerController.createLayer)
-routes.get('/layer/:layer_id', verifyToken, LayerController.getLayerById)
+routes.post('/layerbrowser', verifyToken, LayerController.getLayerByMapId)
+//routes.get('/layer/:layer_id', verifyToken, LayerController.getLayerById)
 routes.delete('/layer/:layer_id',verifyToken, LayerController.delete)
 
 //Login

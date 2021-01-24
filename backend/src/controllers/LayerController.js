@@ -38,15 +38,16 @@ module.exports = {
 
     },
     
-    getLayerById(req, res) {
+    getLayerByMapId(req, res) {
 		jwt.verify(req.token, 'secret', async (err, authData) => {
 			if (err) {
 				res.sendStatus(401)
 			} else {
-				const { layer_id } = req.params
+				const layer_id = req.body.map_id
+				console.log("layer_id: ", layer_id)
 				try {
-					const layers = await Node.findById(layer_id)
-
+					const layers = await Layer.find({map_id: layer_id}).exec()
+					console.log("layers: ", layers)
 					if (layers) {
 						return res.json({ authData: authData, layers: layers })
 					}

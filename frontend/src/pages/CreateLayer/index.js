@@ -82,23 +82,27 @@ export default function CreateLayer({ history }) {
             <h2>Create Layer</h2>
             <Form onSubmit={submitHandler}>
                 <div className="input-group">
-                    {/* map_id, layer_nodes, layer_description, start_date, end_date */}
+
                     <FormGroup>
                         <Label>Map id (of map this layer belongs to):</Label>
                         <Input id="map_id" type="text" value={map_id} placeholder={'Map id'} onChange={(evt) => map_id_Handler(evt)} />
                     </FormGroup>
+
                     <FormGroup>
                         <Label>Layer Description: </Label>
                         <Input id="description" type="text" value={layer_description} placeholder={'Layer Description'} onChange={(evt) => layer_description_Handler(evt)} />
                     </FormGroup>
+
                     <FormGroup>
                         <Label>Layer start date:</Label>
                         <Input id="date" type="date" value={start_date} onChange={(evt) => start_date_Handler(evt)} /> 
                     </FormGroup>
+
                     <FormGroup>
                         <Label>Layer end date:</Label>
                         <Input id="date" type="date" value={end_date} onChange={(evt) => end_date_Handler(evt)} /> 
                     </FormGroup>
+                    
                 </div>
                 <FormGroup>
                     <Button className="submit-btn">Submit</Button>

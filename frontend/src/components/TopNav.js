@@ -41,11 +41,20 @@ export default function TopNav() {
                 if(selected === "maps/browse"){
                     history.push("/mapbrowser")
                 }
+                if(selected === "maps/browselayers"){
+                    history.push("/layerbrowser")
+                }
+                if(selected === "maps/browsenodes"){
+                    history.push("/nodebrowser")
+                }
                 if(selected === "maps/createmap"){
                     history.push("/createmap")
                 }
                 if(selected === "maps/createlayer"){
                     history.push("/createlayer")
+                }
+                if(selected === "maps/createnode"){
+                    history.push("/createnode")
                 }
                 
             }
@@ -94,32 +103,57 @@ export default function TopNav() {
                 </NavItem>
 
                 <NavItem eventKey="maps" id="NavItem">
+
                     <NavIcon>
                         <i className="fa fa-fw fa-line-chart" style={{ fontSize: '1.75em' }} />
                     </NavIcon>
+
                     <NavText id="NavText">
                         Maps
                     </NavText>
+
                     <NavItem eventKey="maps/createmap" id="NavItem">
                         <NavText id="NavTextSub">
                             Create New Map
                         </NavText>
                     </NavItem>
+
                     <NavItem eventKey="maps/createlayer" id="NavItem">
                         <NavText id="NavTextSub">
                             Create Layer (dev)
                         </NavText>
                     </NavItem>
+
+                    <NavItem eventKey="maps/createnode" id="NavItem">
+                        <NavText id="NavTextSub">
+                            Create Node (dev)
+                        </NavText>
+                    </NavItem>
+
                     <NavItem eventKey="maps/browse" id="NavItem">
                         <NavText id="NavTextSub">
                             Browse Maps
                         </NavText>
                     </NavItem>
+
+                    <NavItem eventKey="maps/browselayers" id="NavItem">
+                        <NavText id="NavTextSub">
+                            Browse Layers (dev)
+                        </NavText>
+                    </NavItem>
+
+                    <NavItem eventKey="maps/browsenodes" id="NavItem">
+                        <NavText id="NavTextSub">
+                            Browse Nodes (dev)
+                        </NavText>
+                    </NavItem>
+
                     <NavItem eventKey="maps/mymaps" id="NavItem">
                         <NavText id="NavTextSub">
                             My Maps
                         </NavText>
                     </NavItem>
+
                 </NavItem>
 
                 <NavItem eventKey="map" id="NavItem">

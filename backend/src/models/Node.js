@@ -1,10 +1,8 @@
 const mongoose = require('mongoose')
 
 const NodeSchema = new mongoose.Schema({
-    node_layer_id: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Layer'
-	},
+    node_title: String,
+    node_layer_id: String,
     node_user_id: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User'
