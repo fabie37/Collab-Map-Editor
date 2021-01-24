@@ -39,7 +39,7 @@ routes.get('/node/:node_id', verifyToken, NodeController.getNodeById)
 routes.delete('/node/:node_id',verifyToken, NodeController.delete)
 
 //Layer
-routes.post('/layer',verifyToken, LayerController.createLayer)
+routes.post('/createlayer',verifyToken, LayerController.createLayer)
 routes.get('/layer/:layer_id', verifyToken, LayerController.getLayerById)
 routes.delete('/layer/:layer_id',verifyToken, LayerController.delete)
 

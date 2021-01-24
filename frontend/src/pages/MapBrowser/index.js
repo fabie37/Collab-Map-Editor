@@ -102,11 +102,12 @@ export default function MapBrowser({ history }) {
                     </DropdownMenu>
                 </Dropdown>
             </div>
-            <ul className="events-list">
+            <ul className="maps-list">
                 {maps.map(map => (
                     < li key={map._id} >
-                        <strong>{map.map_title}</strong>
-                        <span>Event Date: {map.map_type}</span>
+                        <strong>Map title: </strong>{map.map_title}
+                        <strong>Map type: </strong>{map.map_type}
+                        <strong>Map public?: </strong>{map.is_public.toString()}
                     </li>
                 ))}
             </ul>

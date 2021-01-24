@@ -4,15 +4,16 @@ import { Alert, Container, CustomInput, Button, Form, FormGroup, Input, Label, D
 import cameraIcon from '../../assets/camera.png'
 import "./createmap.css";
 
-export default function CreateMap({ history }) {
-    const [map_title, setMapTitle] = useState('')
-    const [map_type, setMapType] = useState('')
-    const [is_public, setIsPublic] = useState(false)
+export default function CreateLayer({ history }) {
+    // ATTRIBUTES ***********************************//
+    const [map_id, setMapId] = useState('')
+    const [layer_nodes, setNodes] = useState([])
+    const [layer_description, setDescription] = useState('')
+    const [start_date, setStartDate] = useState('')
+    const [end_date, setEndDate] = useState('')
+    // ATTRIBUTES ***********************************//
 
     const [thumbnail, setThumbnail] = useState(null)
-    const [sport, setSport] = useState('Sport')
-    const [date, setDate] = useState('')
-    
     const [error, setError] = useState(false)
     const [success, setSuccess] = useState(false)
     const [dropdownOpen, setOpen] = useState(false);
@@ -34,20 +35,13 @@ export default function CreateMap({ history }) {
     const submitHandler = async (evt) => {
         evt.preventDefault()
 
-        const mapData = new FormData();
-
-        mapData.append("map_title", map_title)
-        mapData.append("map_type", map_type)
-        mapData.append("is_public", is_public)
-
-
         try {
-            if (map_title !== "" && map_type !== "") {
-                await api.post("/createmap", mapData, { headers: { user } })
+            if (map_id !== "") {
+                await api.post("/createlayer", {map_id, layer_nodes, layer_description, start_date, end_date}, { headers: { user } })
                 setSuccess(true)
                 setTimeout(() => {
                     setSuccess(false)
-                    history.push("/")
+                    history.push("/mapbrowser")
                 }, 2000)
             } else {
                 setError(true)
@@ -61,40 +55,56 @@ export default function CreateMap({ history }) {
         }
     }
 
-    const isPublicHandler = async (evt) => {
-        setIsPublic(!is_public)
+    const map_id_Handler = async (evt) => {
+        setMapId(evt.target.value)
+    }
+
+    const layer_nodes_Handler = async (evt) => {
+        setNodes(evt.target.value)
+    }
+
+    const layer_description_Handler = async (evt) => {
+        setDescription(evt.target.value)
+    }
+
+    const start_date_Handler = async (evt) => {
+        setStartDate(evt.target.value)
+    }
+
+    const end_date_Handler = async (evt) => {
+        setEndDate(evt.target.value)
     }
     
 
     return (
         <Container>
             <div className="panel">
-            <h2>Create your Map</h2>
+            <h2>Create Layer</h2>
             <Form onSubmit={submitHandler}>
                 <div className="input-group">
+                    {/* map_id, layer_nodes, layer_description, start_date, end_date */}
                     <FormGroup>
-                        <Label>Title: </Label>
-                        <Input id="title" type="text" value={map_title} placeholder={'Map Title'} onChange={(evt) => setMapTitle(evt.target.value)} />
+                        <Label>Map id (of map this layer belongs to):</Label>
+                        <Input id="map_id" type="text" value={map_id} placeholder={'Map id'} onChange={(evt) => map_id_Handler(evt)} />
                     </FormGroup>
                     <FormGroup>
-                        <Label>Type: </Label>
-                        <Input id="description" type="text" value={map_type} placeholder={'Map Type'} onChange={(evt) => setMapType(evt.target.value)} />
+                        <Label>Layer Description: </Label>
+                        <Input id="description" type="text" value={layer_description} placeholder={'Layer Description'} onChange={(evt) => layer_description_Handler(evt)} />
                     </FormGroup>
-                    <FormGroup check>
-                        <Label check>
-                        <Input type="checkbox" onChange={isPublicHandler}/>{' '}
-                            Do you want your map to be public?
-                        </Label>
-                        <div>
-                            <CustomInput type="switch" id="exampleCustomSwitch" name="customSwitch" label="This doesnt do anything, I was just experimenting" />
-                        </div>
+                    <FormGroup>
+                        <Label>Layer start date:</Label>
+                        <Input id="date" type="date" value={start_date} onChange={(evt) => start_date_Handler(evt)} /> 
+                    </FormGroup>
+                    <FormGroup>
+                        <Label>Layer end date:</Label>
+                        <Input id="date" type="date" value={end_date} onChange={(evt) => end_date_Handler(evt)} /> 
                     </FormGroup>
                 </div>
                 <FormGroup>
                     <Button className="submit-btn">Submit</Button>
                 </FormGroup>
                 <FormGroup>
-                    <Button className="secondary-btn" onClick={() => history.push("/")}>
+                    <Button className="secondary-btn" onClick={() => history.push("/mapbrowser")}>
                         Cancel
                     </Button>
                 </FormGroup>

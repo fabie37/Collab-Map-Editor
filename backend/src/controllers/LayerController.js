@@ -1,4 +1,5 @@
 const Node = require('../models/Node')
+const Layer = require('../models/Layer')
 const Map = require('../models/Map')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
@@ -10,22 +11,24 @@ module.exports = {
 			if (err) {
 				res.statusCode(401)
 			} else {
-				const { layer_nodes, layer_description, start_date, end_date } = req.body
+				const { map_id, layer_nodes, layer_description, start_date, end_date } = req.body
                 
-                const map_id = await Map.findById(req.body.map_id)
+                //const map_id = await Map.findById(req.body.map_id)
 
-				if (!map_id) {
-					return res.status(400).json({ message: 'Map does not exist!' })
-				}
-
+				console.log("backend debug 1")
+				console.log(req.body)
+				// if (!map_id) {
+				// 	return res.status(400).json({ message: 'Map does not exist!' })
+				// }
 				try {
 					const layer = await Layer.create({
+						map_id,
                         layer_nodes, 
                         layer_description, 
                         start_date, 
                         end_date
 					})
-
+					console.log("backend debug 2")
 					return res.json(layer)
 				} catch (error) {
 					return res.status(400).json({ message: error })

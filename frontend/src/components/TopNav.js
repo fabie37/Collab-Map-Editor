@@ -44,6 +44,9 @@ export default function TopNav() {
                 if(selected === "maps/createmap"){
                     history.push("/createmap")
                 }
+                if(selected === "maps/createlayer"){
+                    history.push("/createlayer")
+                }
                 
             }
         }}>
@@ -100,6 +103,11 @@ export default function TopNav() {
                     <NavItem eventKey="maps/createmap" id="NavItem">
                         <NavText id="NavTextSub">
                             Create New Map
+                        </NavText>
+                    </NavItem>
+                    <NavItem eventKey="maps/createlayer" id="NavItem">
+                        <NavText id="NavTextSub">
+                            Create Layer (dev)
                         </NavText>
                     </NavItem>
                     <NavItem eventKey="maps/browse" id="NavItem">

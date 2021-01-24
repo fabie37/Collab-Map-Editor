@@ -1,10 +1,7 @@
 const mongoose = require('mongoose')
 
 const LayerSchema = new mongoose.Schema({
-    map_id: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Map'
-	},
+    map_id: String,
     layer_nodes: Array,
     layer_description: String,
     start_date: Date,
