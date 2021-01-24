@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './MapContainer.css';
 import Map from '../Map/Map';
@@ -6,25 +6,27 @@ import ToolBar from '../ToolBar/ToolBar';
 import { v4 as uuid } from 'uuid';
 
 const MapContainer = () => {
-    // References to map
-    const mapRef = useRef();
-    let map = useRef();
-    let onNode = useRef(null);
-
     // Toolbar Action State
-    let [toolBarState, setToolBarState] = useState({
-        Add: false,
-        Remove: false,
-        Move: false,
-    });
+    let [addTool, setAddTool] = useState(false);
+    let [removeTool, setRemoveTool] = useState(false);
+    let [moveTool, setMoveTool] = useState(false);
 
-    // When a tool is clicked on
-    const setCurrentToolBar = (evt) => {
-        let toolBarStates = { Add: false, Remove: false, Move: false };
-        let target = evt.target.id;
-        toolBarStates[target] = true;
-        setToolBarState(toolBarStates);
-        console.log(toolBarStates);
+    // Toolbar Acttion Methods
+    const setTool = (evt) => {
+        setAddTool(false);
+        setRemoveTool(false);
+        setMoveTool(false);
+
+        switch (evt.target.id) {
+            case 'addTool':
+                setAddTool(true);
+                break;
+            case 'removeTool':
+                setRemoveTool(true);
+                break;
+            case 'moveTool':
+                setMoveTool(true);
+        }
     };
 
     // Node State
@@ -51,17 +53,16 @@ const MapContainer = () => {
 
     return (
         <div className='map-container'>
-            <ToolBar
-                setTool={setCurrentToolBar}
-                map={map}
-                toolBarState={toolBarState}
+            <ToolBar setTool={setTool}></ToolBar>
+            <div className='storyboard'></div>
+            <Map
+                addTool={addTool}
+                removeTool={removeTool}
+                moveTool={moveTool}
                 addNode={addNode}
                 removeNode={removeNode}
                 nodes={nodes}
-                onNode={onNode}
-            ></ToolBar>
-            <div className='storyboard'></div>
-            <Map map={map} mapRef={mapRef}></Map>
+            ></Map>
         </div>
     );
 };
