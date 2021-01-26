@@ -36,13 +36,13 @@ routes.delete('/mapbrowser/:map_id',verifyToken, MapController.delete)
 //Node
 routes.post('/createnode',verifyToken, NodeController.createNode)
 routes.post('/nodebrowser', verifyToken, NodeController.getNodeByLayerId) // temporary dev page
-routes.get('/node/:layer_id', verifyToken, NodeController.getNodeByLayerId)
+routes.get('/node/:layer_id?', verifyToken, NodeController.getNodeByLayerId)
 routes.delete('/deletenode/:node_id',verifyToken, NodeController.delete)
 
 //Layer
 routes.post('/createlayer',verifyToken, LayerController.createLayer)
 routes.post('/layerbrowser', verifyToken, LayerController.getLayerByMapId) // temporary dev page
-routes.get('/layer/:map_id', verifyToken, LayerController.getLayerByMapId)
+routes.get('/layer/:map_id?', verifyToken, LayerController.getLayerByMapId)
 routes.delete('/deletelayer/:layer_id',verifyToken, LayerController.delete)
 
 //Login

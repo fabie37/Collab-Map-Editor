@@ -51,17 +51,29 @@ module.exports = {
 				res.sendStatus(401)
 			} else {
 				const { layer_id } = req.params
-				try {
-					const nodes = await Node.find({node_layer_id: layer_id}).exec()
-					console.log("nodes: ", nodes)
-					if (nodes) {
-						return res.json({ authData: authData, nodes: nodes })
+				console.log("layer_id:", layer_id)
+				if(layer_id == undefined){
+					try {
+						const nodes = await Node.find({})
+						console.log("nodes: ", nodes)
+						if (nodes) {
+							return res.json({ authData: authData, nodes: nodes })
+						}
+					} catch (error) {
+						return res.status(400).json({ message: 'layer_id does not exist!' })
 					}
-				} catch (error) {
-					return res.status(400).json({ message: 'layer_id does not exist!' })
+				}else {
+					try {
+						const nodes = await Node.find({node_layer_id: layer_id}).exec()
+						console.log("nodes: ", nodes)
+						if (nodes) {
+							return res.json({ authData: authData, nodes: nodes })
+						}
+					} catch (error) {
+						return res.status(400).json({ message: 'layer_id does not exist!' })
+					}
 				}
 			}
-
 		})
 	},
     

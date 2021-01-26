@@ -10,10 +10,11 @@ export default function LayerBrowser({ history }) {
     const [layers, setLayers] = useState([])
     const user = localStorage.getItem('user')
     const user_id = localStorage.getItem('user_id')
+    var filter = ''
 
-    // useEffect(() => {
-    //     getLayers()
-    // }, [])
+    useEffect(() => {
+        getLayers('')
+    })
 
     const socket = useMemo(
         () =>
@@ -23,6 +24,10 @@ export default function LayerBrowser({ history }) {
 
     const getLayers = async (map_id) => {
         try {
+            if(map_id == ''){
+
+                console.log("calling api with param: ", map_id)
+            }
             const url = `/layer/${map_id}`;
 
             const response = await api.get(url, { headers: { user } })
@@ -34,10 +39,17 @@ export default function LayerBrowser({ history }) {
 
     };
 
-
-    const filterHandler = async (evt) => {
-        getLayers(evt.target.value)
+    const updateFilter = async (evt) => {
+        filter = evt.target.value
+        getLayers(filter)
+        console.log("filter: ", filter)
     }
+
+
+    // const filterHandler = async (evt) => {
+    //     console.log("input field current value: ",evt.target.value)
+    //     getLayers(evt.target.value)
+    // }
 
     return (
         <>
@@ -46,7 +58,7 @@ export default function LayerBrowser({ history }) {
                     <strong>Layer browser (dev)</strong>
                     <p>fetch layers by the map_id they belong to</p>
 
-                    <Input id="filter" type="text" placeholder={'filter'} onChange={(evt) => filterHandler(evt)} />
+                    <Input id="filter" type="text" placeholder={'filter'} onChange={(evt) => updateFilter(evt)} />
 
                     <ul className="maps-list">
                         {layers.map(layer => (

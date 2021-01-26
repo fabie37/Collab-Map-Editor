@@ -45,14 +45,28 @@ module.exports = {
 			} else {
 				const { map_id } = req.params
 				console.log("map_id: ", map_id)
-				try {
-					const layers = await Layer.find({map_id: map_id}).exec()
-					console.log("layers: ", layers)
-					if (layers) {
-						return res.json({ authData: authData, layers: layers })
+				console.log("req.params: ", req.params)
+
+				if(map_id == undefined){
+					console.log("we're in this section")
+					try {
+						const layers = await Layer.find({}).exec()
+						if (layers) {
+							return res.json({ authData: authData, layers: layers })
+						}
+					} catch (error) {
+						return res.status(400).json({ message: 'layer_id does not exist!' })
 					}
-				} catch (error) {
-					return res.status(400).json({ message: 'layer_id does not exist!' })
+				}else{
+					try {
+						const layers = await Layer.find({map_id: map_id}).exec()
+						console.log("layers: ", layers)
+						if (layers) {
+							return res.json({ authData: authData, layers: layers })
+						}
+					} catch (error) {
+						return res.status(400).json({ message: 'layer_id does not exist!' })
+					}
 				}
 			}
 

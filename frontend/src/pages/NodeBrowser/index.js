@@ -11,9 +11,9 @@ export default function NodeBrowser({ history }) {
     const user = localStorage.getItem('user')
     const user_id = localStorage.getItem('user_id')
 
-    // useEffect(() => {
-    //     getNodes()
-    // }, [])
+    useEffect(() => {
+        getNodes('')
+    }, [])
 
     const socket = useMemo(
         () =>
