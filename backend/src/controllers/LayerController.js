@@ -43,10 +43,10 @@ module.exports = {
 			if (err) {
 				res.sendStatus(401)
 			} else {
-				const layer_id = req.body.map_id
-				console.log("layer_id: ", layer_id)
+				const { map_id } = req.params
+				console.log("map_id: ", map_id)
 				try {
-					const layers = await Layer.find({map_id: layer_id}).exec()
+					const layers = await Layer.find({map_id: map_id}).exec()
 					console.log("layers: ", layers)
 					if (layers) {
 						return res.json({ authData: authData, layers: layers })

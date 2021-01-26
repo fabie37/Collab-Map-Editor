@@ -23,10 +23,9 @@ export default function LayerBrowser({ history }) {
 
     const getLayers = async (map_id) => {
         try {
-            console.log("fetching layers with filter: ", map_id)
-            const url = '/layerbrowser';
+            const url = `/layer/${map_id}`;
 
-            const response = await api.post(url, {map_id}, { headers: { user } })
+            const response = await api.get(url, { headers: { user } })
 
             setLayers(response.data.layers)
         } catch (error) {

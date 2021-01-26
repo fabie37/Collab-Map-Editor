@@ -23,9 +23,9 @@ export default function NodeBrowser({ history }) {
 
     const getNodes = async (layer_id) => {
         try {
-            const url = '/nodebrowser';
+            const url = `/node/${layer_id}`;
 
-            const response = await api.post(url, {layer_id}, { headers: { user } })
+            const response = await api.get(url, { headers: { user } })
 
             setNodes(response.data.nodes)
         } catch (error) {

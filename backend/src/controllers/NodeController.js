@@ -43,15 +43,14 @@ module.exports = {
 			}
 		})
 
-    },
-    
-    getNodeByLayerId(req, res) {
+	},
+	
+	getNodeByLayerId(req, res) {
 		jwt.verify(req.token, 'secret', async (err, authData) => {
 			if (err) {
 				res.sendStatus(401)
 			} else {
-				const layer_id = req.body.layer_id
-				console.log("layer_id: ", layer_id)
+				const { layer_id } = req.params
 				try {
 					const nodes = await Node.find({node_layer_id: layer_id}).exec()
 					console.log("nodes: ", nodes)
@@ -65,6 +64,27 @@ module.exports = {
 
 		})
 	},
+    
+    // getNodeByLayerId(req, res) {
+	// 	jwt.verify(req.token, 'secret', async (err, authData) => {
+	// 		if (err) {
+	// 			res.sendStatus(401)
+	// 		} else {
+	// 			const layer_id = req.body.layer_id
+	// 			console.log("layer_id: ", layer_id)
+	// 			try {
+	// 				const nodes = await Node.find({node_layer_id: layer_id}).exec()
+	// 				console.log("nodes: ", nodes)
+	// 				if (nodes) {
+	// 					return res.json({ authData: authData, nodes: nodes })
+	// 				}
+	// 			} catch (error) {
+	// 				return res.status(400).json({ message: 'layer_id does not exist!' })
+	// 			}
+	// 		}
+
+	// 	})
+	// },
 
 	delete(req, res) {
 		jwt.verify(req.token, 'secret', async (err) => {
