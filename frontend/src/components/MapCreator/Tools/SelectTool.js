@@ -1,34 +1,31 @@
 import React, { useEffect } from 'react';
 import Tool from './Tool';
 
-const RemoveTool = ({ onClick, map, toolBarState, removeNode }) => {
+const SelectTool = ({ onClick, map, toolBarState, selectNode }) => {
     // Properties:
-    let id = 'Remove';
+    let id = 'Select';
 
     // Listeners:
-    const removeClick = () => {
-        map.current.on('click', clearNode);
+    const selectClick = () => {
+        map.current.on('click', focusNode);
     };
 
-    const removeRemoveClick = () => {
-        map.current.removeEventListener('click', clearNode);
+    const removeSelectClick = () => {
+        map.current.removeEventListener('click', focusNode);
     };
 
     // Main Tool Function:
-    const clearNode = (event) => {
+    const focusNode = (event) => {
         var feature = event.map.forEachFeatureAtPixel(
             event.pixel,
             function (feature) {
                 return feature;
             }
         );
+
         if (feature) {
             console.log(feature.getId());
-            removeNode(feature.getId());
-            map.current
-                .getLayers()
-                .array_[1].getSource()
-                .removeFeature(feature);
+            selectNode(feature.getId());
         }
     };
 
@@ -37,13 +34,11 @@ const RemoveTool = ({ onClick, map, toolBarState, removeNode }) => {
         if (map === null) {
             return;
         }
-
         if (toolBarState[id] === true) {
-            removeClick();
+            selectClick();
         }
-
         return () => {
-            removeRemoveClick();
+            removeSelectClick();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [toolBarState]);
@@ -51,4 +46,4 @@ const RemoveTool = ({ onClick, map, toolBarState, removeNode }) => {
     return <Tool id={id} onClick={onClick}></Tool>;
 };
 
-export default RemoveTool;
+export default SelectTool;

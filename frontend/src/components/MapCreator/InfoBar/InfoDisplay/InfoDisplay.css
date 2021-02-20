@@ -1,0 +1,48 @@
+.info-display {
+    display: grid;
+    background-color: rgb(248, 248, 248);
+    grid-area: infobar;
+    z-index: 99;
+    border-radius: 2em;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 0.2fr 2.5fr 1fr;
+    grid-template-areas:
+        'mediabox mediabox mediabox'
+        'title title .'
+        'date date date'
+        'text text text'
+        'nav nav nav';
+    max-height: 100%;
+    overflow: hidden;
+    margin-left: 0.7em;
+    margin-right: 0.7em;
+}
+
+.mediabox {
+    background-color: rgb(80, 80, 80);
+    grid-area: mediabox;
+    border-top-left-radius: 2em;
+    border-top-right-radius: 2em;
+}
+
+.title {
+    grid-area: title;
+    padding-left: 1em;
+    font-size: 2em;
+    align-self: center;
+}
+
+.text {
+    grid-area: text;
+    padding-left: 1.2em;
+    padding-right: 1.2em;
+    overflow: auto;
+}
+
+.date {
+    grid-area: date;
+    padding-left: 1.2em;
+    padding-right: 1.2em;
+    overflow: auto;
+}

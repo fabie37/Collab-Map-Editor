@@ -2,6 +2,7 @@ import React from 'react';
 import AddTool from '../Tools/AddTool';
 import RemoveTool from '../Tools/RemoveTool';
 import MoveTool from '../Tools/MoveTool';
+import SelectTool from '../Tools/SelectTool';
 import './ToolBar.css';
 
 function ToolBar({
@@ -10,6 +11,8 @@ function ToolBar({
     toolBarState,
     addNode,
     removeNode,
+    selectNode,
+    updateNodeCoords,
     nodes,
     onNode,
 }) {
@@ -32,7 +35,14 @@ function ToolBar({
                 onClick={setTool}
                 toolBarState={toolBarState}
                 onNode={onNode}
+                updateNodeCoords={updateNodeCoords}
             ></MoveTool>
+            <SelectTool
+                map={map}
+                onClick={setTool}
+                toolBarState={toolBarState}
+                selectNode={selectNode}
+            ></SelectTool>
         </div>
     );
 }

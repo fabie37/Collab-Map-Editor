@@ -8,18 +8,24 @@ module.exports = {
 	createNode(req, res) {
         //check that user is logged in
 		jwt.verify(req.token, 'secret', async (err, authData) => {
+			console.log("Api call coming in!")
+
 			if (err) {
+				console.log("Api call fails on 401")
 				res.statusCode(401)
 			} else {
+				console.log("Api call makes it to else")
 				const { node_title, node_layer_id, node_category, connected_nodes, node_coordinates, node_start_date, node_end_date, node_description } = req.body
                 
                 const node_user_id = await User.findById(authData.user._id)
                 //const node_layer_id = await Layer.findById(req.body.layer_id)
 
 				if (!node_user_id) {
+					console.log("Api call user id doesnt exist")
 					return res.status(400).json({ message: 'User does not exist!' })
                 }
                 if (!node_layer_id) {
+					console.log("Api call layer id doesnt exist")
 					return res.status(400).json({ message: 'Layer does not exist!' })
 				}
 
@@ -35,9 +41,10 @@ module.exports = {
                         node_end_date, 
                         node_description
 					})
-
+					console.log("Api call node created")
 					return res.json(node)
 				} catch (error) {
+					console.log("Api call node creation failed" + error)
 					return res.status(400).json({ message: error })
 				}
 			}

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Tool from './Tool';
 import Point from 'ol/geom/Point';
 
-const MoveTool = ({ onClick, map, toolBarState, onNode }) => {
+const MoveTool = ({ onClick, map, toolBarState, onNode, updateNodeCoords }) => {
     // Properties:
     let id = 'Move';
 
@@ -40,6 +40,12 @@ const MoveTool = ({ onClick, map, toolBarState, onNode }) => {
     };
 
     const pointerMoveUp = (event) => {
+        if (onNode.current) {
+            updateNodeCoords(
+                onNode.current.getId(),
+                onNode.current.getGeometry().getCoordinates()
+            );
+        }
         onNode.current = null;
     };
 
