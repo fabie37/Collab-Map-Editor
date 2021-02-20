@@ -23,7 +23,7 @@ export default function NodeBrowser({ history }) {
 
     const getNodes = async (layer_id) => {
         try {
-            const url = `/node/${layer_id}`;
+            const url = `/nodebylayer/${layer_id}`;
 
             const response = await api.get(url, { headers: { user } })
 

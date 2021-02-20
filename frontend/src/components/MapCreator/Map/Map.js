@@ -62,6 +62,7 @@ const Map = ({ children, map, mapRef, nodes }) => {
 
     // Method For Creating a node
     const createNode = (node) => {
+        console.log("createNode in Map.js being called")
         var icon = new Feature({
             geometry: new Point(node.coords),
             id: node.uid,

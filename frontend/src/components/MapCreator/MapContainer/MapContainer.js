@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './MapContainer.css';
 import Map from '../Map/Map';
@@ -8,8 +8,24 @@ import Nodes from '../../../sample_data/nodes.json';
 import { v4 as uuid } from 'uuid';
 import { closestOnCircle } from 'ol/coordinate';
 import { getUserProjection } from 'ol/proj';
+import moment from 'moment';
+import api from '../../../services/api';
 
 const MapContainer = () => {
+    // User fetching
+    const user = localStorage.getItem('user');
+    
+    // Node properties
+    let node_title = 'Map created test node'
+    let node_layer_id = '...'
+    let node_category = '...'
+    let connected_nodes = []
+    let node_coordinates = []
+    let node_start_date = moment().toString();
+    let node_end_date = moment().toString();
+    let node_description = '...'
+
+
     // References to map
     const mapRef = useRef();
     let map = useRef();
@@ -36,18 +52,64 @@ const MapContainer = () => {
     let [nodes, setNodes] = useState(Nodes.items);
     let [currentNode, setCurrentNode] = useState(null);
 
+    const [createdNodes, setCreatedNodes] = useState([])
+    const [newNodeId, setNewNodeId] = useState('')
+
+    // API CALLS *************************************************************************************************************************************
+
+    // Api call to create node in DB
+    const nodeApiCreate = async () => {
+        let response = await api.post("/createnode", {node_title, node_layer_id, node_category, node_description, node_start_date, node_end_date}, { headers: { user } })
+        //await setCreatedNodes([...createdNodes, response.data.node._id])
+        await setNewNodeId(response.data.node._id)
+        console.log("node id updated? : " + newNodeId == response.data.node._id)
+        console.log("createdNodes(" + createdNodes.length + "): " + createdNodes);
+        return response;
+    };
+
+    // Api call to create node in DB
+    const nodeApiLoad = async (_id) => {
+        console.log("nodeApiLoad being called with: " + _id)
+        let response = await api.get(`/node/${_id}`, { headers: { user } })
+        console.log("load node from db: " + response.data.node)
+    };
+
+    // ***********************************************************************************************************************************************
+
     // Node Methods
-    const addNode = (coords) => {
+    const addNode = async (coords) => {
+        await nodeApiCreate()
+
         const node = {
             uid: uuid(),
+            _id: newNodeId,
             coords: coords,
-            title: 'New Event',
-            text: 'What happen here?',
+            title: 'NewNode',
+            text: ('What happen here?' + newNodeId),
         };
 
-        setNodes((oldlist) => [...oldlist, node]);
-        setCurrentNode(node);
+        console.log("New node in map created with id: " + node._id)
+
+        await setNodes((oldlist) => [...oldlist, node]);
+        await setCurrentNode(node);
         return node;
+
+        // nodeApiCreate()
+
+
+        // const node = {
+        //     uid: uuid(),
+        //     _id: newNodeId,
+        //     coords: coords,
+        //     title: 'NewNode',
+        //     text: ('What happen here?' + newNodeId),
+        // };
+
+        // console.log("New node in map created with id: " + node._id)
+
+        // setNodes((oldlist) => [...oldlist, node]);
+        // setCurrentNode(node);
+        // return node;
     };
 
     const removeNode = (uid) => {
@@ -91,6 +153,10 @@ const MapContainer = () => {
         let selectedNode = nodes.filter((selectedNode) => {
             return selectedNode.uid == uid;
         });
+
+        console.log("Selected node id: " + selectedNode[0]._id)
+
+        nodeApiLoad(selectedNode[0]._id)
         setCurrentNode(selectedNode[0]);
     };
 

@@ -8,24 +8,24 @@ module.exports = {
 	createNode(req, res) {
         //check that user is logged in
 		jwt.verify(req.token, 'secret', async (err, authData) => {
-			console.log("Api call coming in!")
+			//console.log("Api call coming in!")
 
 			if (err) {
-				console.log("Api call fails on 401")
+				//console.log("Api call fails on 401")
 				res.statusCode(401)
 			} else {
-				console.log("Api call makes it to else")
+				//console.log("Api call makes it to else")
 				const { node_title, node_layer_id, node_category, connected_nodes, node_coordinates, node_start_date, node_end_date, node_description } = req.body
                 
                 const node_user_id = await User.findById(authData.user._id)
                 //const node_layer_id = await Layer.findById(req.body.layer_id)
 
 				if (!node_user_id) {
-					console.log("Api call user id doesnt exist")
+					//console.log("Api call user id doesnt exist")
 					return res.status(400).json({ message: 'User does not exist!' })
                 }
                 if (!node_layer_id) {
-					console.log("Api call layer id doesnt exist")
+					//console.log("Api call layer id doesnt exist")
 					return res.status(400).json({ message: 'Layer does not exist!' })
 				}
 
@@ -41,10 +41,11 @@ module.exports = {
                         node_end_date, 
                         node_description
 					})
-					console.log("Api call node created")
-					return res.json(node)
+					//console.log("Api call node created")
+					//console.log("New node id: " + node._id)
+					return res.json({ authData: authData, node: node })
 				} catch (error) {
-					console.log("Api call node creation failed" + error)
+					//console.log("Api call node creation failed" + error)
 					return res.status(400).json({ message: error })
 				}
 			}
@@ -58,16 +59,15 @@ module.exports = {
 				res.sendStatus(401)
 			} else {
 				const { layer_id } = req.params
-				console.log("layer_id:", layer_id)
 				if(layer_id == undefined){
 					try {
-						const nodes = await Node.find({})
+						const nodes = await Node.find({}).exec()
 						console.log("nodes: ", nodes)
 						if (nodes) {
 							return res.json({ authData: authData, nodes: nodes })
 						}
 					} catch (error) {
-						return res.status(400).json({ message: 'layer_id does not exist!' })
+						return res.status(400).json({ message: 'no nodes in db!' })
 					}
 				}else {
 					try {
@@ -75,6 +75,29 @@ module.exports = {
 						console.log("nodes: ", nodes)
 						if (nodes) {
 							return res.json({ authData: authData, nodes: nodes })
+						}
+					} catch (error) {
+						return res.status(400).json({ message: 'layer_id does not exist!' })
+					}
+				}
+			}
+		})
+	},
+
+
+	getNodeById(req, res) {
+		jwt.verify(req.token, 'secret', async (err, authData) => {
+			if (err) {
+				res.sendStatus(401)
+			} else {
+				const { _id } = req.params
+				if(_id == undefined){
+					return res.status(400).json({ message: 'node id does not exist!' })
+				}else {
+					try {
+						const node = await Node.find({_id: _id}).exec()
+						if (node) {
+							return res.json({ authData: authData, node: node })
 						}
 					} catch (error) {
 						return res.status(400).json({ message: 'layer_id does not exist!' })
