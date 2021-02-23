@@ -55,6 +55,7 @@ const Map = ({ children, map, mapRef, nodes }) => {
 
     // Load in nodes that have been previously saved
     const loadNodes = (nodes) => {
+        console.log("loadNodes being called " + nodes)
         for (var i = 0; i < nodes.length; i++) {
             createNode(nodes[i]);
         }
@@ -62,13 +63,13 @@ const Map = ({ children, map, mapRef, nodes }) => {
 
     // Method For Creating a node
     const createNode = (node) => {
-        console.log("createNode in Map.js being called")
+        console.log("creating node with title: " + node.node_title)
         var icon = new Feature({
-            geometry: new Point(node.coords),
-            id: node.uid,
+            geometry: new Point(node.node_coordinates),
+            id: node._id,
         });
 
-        icon.setId(node.uid);
+        icon.setId(node._id);
 
         icon.setStyle(
             new Style({

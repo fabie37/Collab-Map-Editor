@@ -49,7 +49,32 @@ const MapContainer = () => {
     };
 
     // Node State
-    let [nodes, setNodes] = useState(Nodes.items);
+    const loadMapNodes = ()=>{
+        let map_id = "600d7d1085dee931a87f080f"; // Map id hardcoded for now for testing purposes
+        api.get(`/mapbrowser/${map_id}`, { headers: { user } }).then(map_response => {
+            api.get(`/nodebylayer/${map_response.data.maps.map_layers}`, { headers: { user } }).then(node_response => {
+                // setNodes(node_response.data.nodes)
+                console.log("This keeps repeating for some reason!")
+            })
+        })
+    }
+
+    
+
+    
+    let [nodes, setNodes] = useState([]);
+    useEffect(() => {
+        let map_id = "600d7d1085dee931a87f080f"; // Map id hardcoded for now for testing purposes
+        api.get(`/mapbrowser/${map_id}`, { headers: { user } }).then(map_response => {
+            api.get(`/nodebylayer/${map_response.data.maps.map_layers}`, { headers: { user } }).then(node_response => {
+                setNodes(node_response.data.nodes)
+                console.log("node_response: " + node_response.data.nodes[0].node_title)
+                console.log("node_response: " + node_response.data.nodes[1].node_title)
+            })
+        })
+    }, [])
+    // loadMapNodes();
+    // let [nodes, setNodes] = useState(Nodes.items);
     let [currentNode, setCurrentNode] = useState(null);
 
     const [createdNodes, setCreatedNodes] = useState([])
@@ -84,7 +109,7 @@ const MapContainer = () => {
             uid: uuid(),
             _id: newNodeId,
             coords: coords,
-            title: 'NewNode',
+            title: "New Node",
             text: ('What happen here?' + newNodeId),
         };
 

@@ -62,7 +62,6 @@ module.exports = {
 				if(layer_id == undefined){
 					try {
 						const nodes = await Node.find({}).exec()
-						console.log("nodes: ", nodes)
 						if (nodes) {
 							return res.json({ authData: authData, nodes: nodes })
 						}
@@ -72,7 +71,6 @@ module.exports = {
 				}else {
 					try {
 						const nodes = await Node.find({node_layer_id: layer_id}).exec()
-						console.log("nodes: ", nodes)
 						if (nodes) {
 							return res.json({ authData: authData, nodes: nodes })
 						}

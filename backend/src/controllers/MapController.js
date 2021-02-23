@@ -43,6 +43,7 @@ module.exports = {
 				res.sendStatus(401)
 			} else {
 				const { map_id } = req.params
+
 				try {
 					const maps = await Map.findById(map_id)
 

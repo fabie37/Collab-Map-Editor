@@ -15,8 +15,6 @@ module.exports = {
                 
                 //const map_id = await Map.findById(req.body.map_id)
 
-				console.log("backend debug 1")
-				console.log(req.body)
 				// if (!map_id) {
 				// 	return res.status(400).json({ message: 'Map does not exist!' })
 				// }
@@ -28,7 +26,6 @@ module.exports = {
                         start_date, 
                         end_date
 					})
-					console.log("backend debug 2")
 					return res.json(layer)
 				} catch (error) {
 					return res.status(400).json({ message: error })
