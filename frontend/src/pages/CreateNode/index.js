@@ -11,7 +11,11 @@ export default function CreateNode({ history }) {
     //const [node_user_id, set_node_user_id] = useState('')
     const [node_category, set_node_category] = useState('')
     const [connected_nodes, set_connected_nodes] = useState([])
-    const [node_coordinates, set_node_coordinates] = useState([])
+
+    const [node_coordinates, set_node_coordinates] = useState(['0', '0'])
+    const [node_coordinatesX, set_node_coordinatesX] = useState('')
+    const [node_coordinatesY, set_node_coordinatesY] = useState('')
+
     const [node_start_date, set_node_start_date] = useState('')
     const [node_end_date, set_node_end_date] = useState('')
     const [node_description, set_node_description] = useState('')
@@ -39,10 +43,9 @@ export default function CreateNode({ history }) {
 
     const submitHandler = async (evt) => {
         evt.preventDefault()
-
         try {
             if (node_layer_id !== "") {
-                await api.post("/createnode", {node_title, node_layer_id, node_category, node_description, node_start_date, node_end_date}, { headers: { user } })
+                await api.post("/createnode", {node_title, node_layer_id, node_category, node_description, node_coordinates, node_start_date, node_end_date}, { headers: { user } })
                 setSuccess(true)
                 setTimeout(() => {
                     setSuccess(false)
@@ -85,6 +88,16 @@ export default function CreateNode({ history }) {
                     <FormGroup>
                         <Label>Node description: </Label>
                         <Input id="description" type="text" value={node_description} placeholder={'Map Title'} onChange={(evt) => set_node_description(evt.target.value)} />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label>Latitude: </Label>
+                        <Input id="latitude" type="text" value={node_coordinates[0]} placeholder={''} onChange={(evt) => node_coordinates[0] = evt.target.value} />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label>Longitude: </Label>
+                        <Input id="longitude" type="text" value={node_coordinates[1]} placeholder={''} onChange={(evt) => node_coordinates[1] = evt.target.value} />
                     </FormGroup>
 
                     <FormGroup>

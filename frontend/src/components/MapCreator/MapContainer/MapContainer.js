@@ -15,7 +15,7 @@ const MapContainer = () => {
     // User fetching
     const user = localStorage.getItem('user');
     
-    // Node properties
+    // Node properties for new nodes
     let node_title = 'Map created test node'
     let node_layer_id = '...'
     let node_category = '...'
@@ -49,79 +49,89 @@ const MapContainer = () => {
     };
 
     // Node State
-    const loadMapNodes = ()=>{
+    let [nodes, setNodes] = useState([]);
+
+    let [currentNode, setCurrentNode] = useState(null);
+
+    const [newNodeId, setNewNodeId] = useState('')
+
+    useEffect(() => {
+        mapInit()
+    }, []);
+
+    // API CALLS *************************************************************************************************************************************
+
+    const mapInit = () => {
         let map_id = "600d7d1085dee931a87f080f"; // Map id hardcoded for now for testing purposes
+        console.log("Loading map with map_id: " + map_id)
+        const node = {
+            uid: '',
+            coords: '',
+            title: '',
+            category: '',
+            text: ('What happen here?'),
+        };
         api.get(`/mapbrowser/${map_id}`, { headers: { user } }).then(map_response => {
             api.get(`/nodebylayer/${map_response.data.maps.map_layers}`, { headers: { user } }).then(node_response => {
-                // setNodes(node_response.data.nodes)
-                console.log("This keeps repeating for some reason!")
+                console.log(node_response)
+                // nodes = node_response.data.nodes
+                for (var i = 0; i < node_response.data.nodes.length; i++){
+                    node.title = node_response.data.nodes[i].node_title
+                    node.category = node_response.data.nodes[i].node_category
+                    node.coords = node_response.data.nodes[i].node_coordinates
+                    node.text = 'node id from api: ' + node_response.data.nodes[i]._id
+                    setNodes((oldlist) => [...oldlist, node]);
+                }
             })
         })
     }
-
     
-
-    
-    let [nodes, setNodes] = useState([]);
-    useEffect(() => {
-        let map_id = "600d7d1085dee931a87f080f"; // Map id hardcoded for now for testing purposes
-        api.get(`/mapbrowser/${map_id}`, { headers: { user } }).then(map_response => {
-            api.get(`/nodebylayer/${map_response.data.maps.map_layers}`, { headers: { user } }).then(node_response => {
-                setNodes(node_response.data.nodes)
-                console.log("node_response: " + node_response.data.nodes[0].node_title)
-                console.log("node_response: " + node_response.data.nodes[1].node_title)
-            })
-        })
-    }, [])
-    // loadMapNodes();
-    // let [nodes, setNodes] = useState(Nodes.items);
-    let [currentNode, setCurrentNode] = useState(null);
-
-    const [createdNodes, setCreatedNodes] = useState([])
-    const [newNodeId, setNewNodeId] = useState('')
-
-    // API CALLS *************************************************************************************************************************************
 
     // Api call to create node in DB
     const nodeApiCreate = async () => {
         let response = await api.post("/createnode", {node_title, node_layer_id, node_category, node_description, node_start_date, node_end_date}, { headers: { user } })
-        //await setCreatedNodes([...createdNodes, response.data.node._id])
         await setNewNodeId(response.data.node._id)
         console.log("node id updated? : " + newNodeId == response.data.node._id)
-        console.log("createdNodes(" + createdNodes.length + "): " + createdNodes);
         return response;
-    };
-
-    // Api call to create node in DB
-    const nodeApiLoad = async (_id) => {
-        console.log("nodeApiLoad being called with: " + _id)
-        let response = await api.get(`/node/${_id}`, { headers: { user } })
-        console.log("load node from db: " + response.data.node)
     };
 
     // ***********************************************************************************************************************************************
 
     // Node Methods
-    const addNode = async (coords) => {
-        await nodeApiCreate()
-
+    const addNode = (node_coordinates) => {
+        // node_title,
+        //                 node_user_id: authData.user._id,
+        //                 node_layer_id,
+		// 				node_category,
+		// 				connected_nodes,
+        //                 node_coordinates,
+        //                 node_start_date, 
+        //                 node_end_date, 
+        //                 node_description
         const node = {
-            uid: uuid(),
-            _id: newNodeId,
-            coords: coords,
-            title: "New Node",
-            text: ('What happen here?' + newNodeId),
+            uid: '',
+            coords: node_coordinates,
+            title: 'NewNode',
+            category: '',
+            text: ('What happen here?'),
         };
 
-        console.log("New node in map created with id: " + node._id)
+        api.post("/createnode", {node_title, node_layer_id, node_category, node_description, node_coordinates, node_start_date, node_end_date}, { headers: { user } }).then(node_response => {
+            setNewNodeId(node_response.data.node._id)
+            console.log("node id updated? : " + newNodeId == node_response.data.node._id)
 
-        await setNodes((oldlist) => [...oldlist, node]);
-        await setCurrentNode(node);
+            node.title = node_response.data.node.node_title
+            node.category = node_response.data.node.node_category
+            node.text = 'node id from api: ' + node_response.data.node._id
+    
+            setNodes((oldlist) => [...oldlist, node]);
+            setCurrentNode(node);
+            
+        })
+        
+        
+
         return node;
-
-        // nodeApiCreate()
-
-
         // const node = {
         //     uid: uuid(),
         //     _id: newNodeId,
@@ -179,9 +189,6 @@ const MapContainer = () => {
             return selectedNode.uid == uid;
         });
 
-        console.log("Selected node id: " + selectedNode[0]._id)
-
-        nodeApiLoad(selectedNode[0]._id)
         setCurrentNode(selectedNode[0]);
     };
 
@@ -199,7 +206,7 @@ const MapContainer = () => {
                 onNode={onNode}
             ></ToolBar>
             <div className='storyboard'></div>
-            <Map map={map} mapRef={mapRef} nodes={nodes}></Map>
+            <Map map={map} mapRef={mapRef} nodes={nodes} setNodes={setNodes}></Map>
             <InfoBar
                 map={map}
                 removeNode={removeNode}

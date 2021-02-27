@@ -22,7 +22,7 @@ const AddTool = ({ onClick, map, toolBarState, addNode }) => {
     // Main Tool Function:
     const createNode = async (event) => {
         const newNode = await addNode(event.coordinate);
-
+        console.log("newNode: " + newNode)
         var icon = new Feature({
             geometry: new Point(newNode.coords),
             id: newNode.uid,

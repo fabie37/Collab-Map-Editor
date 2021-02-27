@@ -8,10 +8,7 @@ module.exports = {
 	createNode(req, res) {
         //check that user is logged in
 		jwt.verify(req.token, 'secret', async (err, authData) => {
-			//console.log("Api call coming in!")
-
 			if (err) {
-				//console.log("Api call fails on 401")
 				res.statusCode(401)
 			} else {
 				//console.log("Api call makes it to else")

@@ -9,10 +9,12 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { Icon, Style } from 'ol/style';
 import marker from '../Tools/node.png';
+import api from '../../../services/api';
 
-const Map = ({ children, map, mapRef, nodes }) => {
+const Map = ({ children, map, mapRef, nodes, setNodes }) => {
     // Effect Hooks
     // Map Initialization: Runs only on initalisation
+    const user = localStorage.getItem('user');
     useEffect(() => {
         // Configurations
         let options = {
@@ -36,7 +38,9 @@ const Map = ({ children, map, mapRef, nodes }) => {
         let mapObject = new ol.Map(options);
         map.current = mapObject;
 
-        loadNodes(nodes);
+
+        
+        
 
         map.current.on('pointermove', showCursorOnFeatureHover);
 
@@ -44,8 +48,15 @@ const Map = ({ children, map, mapRef, nodes }) => {
             mapObject.setTarget(undefined);
             map.current.removeEventListener(showCursorOnFeatureHover);
         };
+        
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+
+    useEffect(() => {
+        console.log(nodes)
+        loadNodes(nodes);
+    }, [nodes]);
 
     // Show Cursor
     const showCursorOnFeatureHover = (e) => {
@@ -55,7 +66,7 @@ const Map = ({ children, map, mapRef, nodes }) => {
 
     // Load in nodes that have been previously saved
     const loadNodes = (nodes) => {
-        console.log("loadNodes being called " + nodes)
+        console.log("loadNodes " + nodes.toString())
         for (var i = 0; i < nodes.length; i++) {
             createNode(nodes[i]);
         }
@@ -63,9 +74,8 @@ const Map = ({ children, map, mapRef, nodes }) => {
 
     // Method For Creating a node
     const createNode = (node) => {
-        console.log("creating node with title: " + node.node_title)
         var icon = new Feature({
-            geometry: new Point(node.node_coordinates),
+            geometry: new Point(node.coords),
             id: node._id,
         });
 
