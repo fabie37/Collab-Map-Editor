@@ -1,37 +1,54 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const cors = require('cors')
-const routes = require('./routes')
-const path = require('path')
-const http = require('http')
-const socketio = require('socket.io')
-const PORT = process.env.PORT || 8000
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
+const path = require('path');
+const http = require('http');
+const socketio = require('socket.io');
+const connectDB = require('./config/db');
 
+// Load Enviroment Variables
+require('dotenv').config();
+const PORT = process.env.PORT || 8000;
+const app = express();
 
+// Connect To Database
+connectDB();
 
-const app = express()
-const server = http.Server(app)
+// Body parser
+app.use(express.json());
+
+// Route Files
+const MapRouter = require('./routes/Map');
+const DashBoardRouter = require('./routes/DashBoard');
+const UserRouter = require('./routes/User');
+const LoginRouter = require('./routes/Login');
+
+// Mount Routers
+app.use('/api/v1/maps', MapRouter);
+app.use('/api/v1/dashbaord', DashBoardRouter);
+app.use('/api/v1/user', UserRouter);
+app.use('/api/v1/login', LoginRouter);
+
+// Middleware
+app.use(cors());
+app.use('/files', express.static(path.resolve(__dirname, '..', 'files')));
+
+// Create the server
+const server = http.createServer(app);
+
+// Socket io
 const io = require('socket.io')(server, {
-	cors: {
-	  origin: '*',
-	}
-  });
+    cors: {
+        origin: '*',
+    },
+});
 
-
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
-}
-
-try {
-    mongoose.connect(process.env.MONGO_DB_CONNECTION, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-    console.log('MongoDb connected successfully!');
-} catch (error) {
-    console.log(error);
-}
+app.use((req, res, next) => {
+    req.io = io;
+    req.connectUsers = connectUsers;
+    return next();
+});
 
 const connectUsers = {};
 
@@ -41,17 +58,9 @@ io.on('connection', (socket) => {
     connectUsers[user] = socket.id;
 });
 
-//app.use()
-app.use((req, res, next) => {
-    req.io = io;
-    req.connectUsers = connectUsers;
-    return next();
-});
-app.use(cors());
-app.use(express.json());
-app.use('/files', express.static(path.resolve(__dirname, '..', 'files')));
-app.use(routes);
-
+// Start the server
 server.listen(PORT, () => {
-    console.log(`Listening on ${PORT}`);
+    console.log(
+        `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+    );
 });
