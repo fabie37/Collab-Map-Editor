@@ -1,10 +1,19 @@
-//Node
-routes.post('/createnode', verifyToken, NodeController.createNode);
-routes.post('/nodebrowser', verifyToken, NodeController.getNodeByLayerId); // temporary dev page
-routes.get(
-    '/nodebylayer/:layer_id?',
-    verifyToken,
-    NodeController.getNodeByLayerId
-);
-routes.get('/node/:node_id?', verifyToken, NodeController.getNodeById);
-routes.delete('/deletenode/:node_id', verifyToken, NodeController.delete);
+const express = require('express');
+const verifyToken = require('../config/verifyToken');
+const router = express.Router();
+
+const {
+    createNode,
+    getNodesByMapId,
+    updateNode,
+    deleteNode,
+} = require('../controllers/NodeController');
+
+const { protect, protectMap } = require('../middleware/auth');
+
+router.post('/:id', protect, protectMap, createNode);
+router.get('/:id', protect, protectMap, getNodesByMapId);
+router.delete('/:id', protect, protectMap, deleteNode);
+router.put('/:id', protect, protectMap, updateNode);
+
+module.exports = router;

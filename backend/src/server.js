@@ -67,6 +67,7 @@ const UserRouter = require('./routes/User');
 const LoginRouter = require('./routes/Login');
 const AuthRouter = require('./routes/Auth');
 const LayerRouter = require('./routes/Layer');
+const NodeRouter = require('./routes/Node');
 
 // Mount Routers
 app.use('/api/v1/maps', MapRouter);
@@ -75,6 +76,7 @@ app.use('/api/v1/user', UserRouter);
 app.use('/api/v1/login', LoginRouter);
 app.use('/api/v1/auth', AuthRouter);
 app.use('/api/v1/layer', LayerRouter);
+app.use('/api/v1/node', NodeRouter);
 
 // Error Handler Middleware (after routes)
 app.use(errorHandler);
