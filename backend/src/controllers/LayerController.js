@@ -11,18 +11,8 @@ exports.createLayer = asyncHandler(async (req, res, next) => {
     // Take out user data for layer
     const { layer_nodes, layer_description, start_date, end_date } = req.body;
 
-    // Find map user is creating from
-    const map = await Map.findById(req.params.id);
-
-    // Make sure user is allowed to add to this map
-    const map_user_id = String(map.map_user_id).trim();
-    const user_id = String(req.user._id).trim();
-
-    if (map_user_id !== user_id) {
-        return next(
-            new ErrorResponse('Not authorised to use this resource', 401)
-        );
-    }
+    // Middleware grabs map for us (see auth.js in middleware)
+    var map = req.map;
 
     map.map_layers.push({
         map_id: req.params.id,
@@ -44,18 +34,8 @@ exports.createLayer = asyncHandler(async (req, res, next) => {
 // @route   GET  /api/v1/layer/:id
 // @access  Private
 exports.getLayersByMapId = asyncHandler(async (req, res, next) => {
-    // Find map user is creating from
-    const map = await Map.findById(req.params.id);
-
-    // Make sure user is allowed to add to this map
-    const map_user_id = String(map.map_user_id).trim();
-    const user_id = String(req.user._id).trim();
-
-    if (map_user_id !== user_id) {
-        return next(
-            new ErrorResponse('Not authorised to use this resource', 401)
-        );
-    }
+    // Middleware grabs map for us (see auth.js in middleware)
+    var map = req.map;
 
     res.status(200).json({
         success: true,
@@ -63,22 +43,36 @@ exports.getLayersByMapId = asyncHandler(async (req, res, next) => {
     });
 });
 
+// @desc    Update a layer given a map id
+// @route   PUT /api/v1/layer/:id
+// @access  Private
+exports.updateLayer = asyncHandler(async (req, res, next) => {
+    // Get Layer id from param
+    const { layer_id } = req.body;
+
+    // Middleware grabs map for us (see auth.js in middleware)
+    var map = req.map;
+
+    // Get layer from map_layers
+    if (!map.map_layers.id(req.body.layer_id)) {
+        return next(new ErrorResponse('Resource not found.', 401));
+    }
+    map.map_layers.id(layer_id).set(req.body);
+
+    await map.save();
+
+    res.status(200).json({
+        success: true,
+        data: map,
+    });
+});
+
 // @desc    Delete layer given map id (body has layer id)
 // @route   DELETE  /api/v1/layer/:id
 // @access  Private
 exports.deleteLayer = asyncHandler(async (req, res, next) => {
-    // Find map user is creating from
-    const map = await Map.findById(req.params.id);
-
-    // Make sure user is allowed to add to this map
-    const map_user_id = String(map.map_user_id).trim();
-    const user_id = String(req.user._id).trim();
-
-    if (map_user_id !== user_id) {
-        return next(
-            new ErrorResponse('Not authorised to use this resource', 401)
-        );
-    }
+    // Middleware grabs map for us (see auth.js in middleware)
+    var map = req.map;
 
     if (!map.map_layers.id(req.body.layer_id)) {
         return next(new ErrorResponse('Resource not found.', 401));
