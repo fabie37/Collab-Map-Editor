@@ -1,12 +1,23 @@
 const express = require('express');
-const router = express.Router();
-const uploadConfig = require('../config/upload');
-const multer = require('multer');
-const upload = multer(uploadConfig);
+const {
+    getUsers,
+    getUser,
+    createUser,
+    updateUser,
+    deleteUser,
+} = require('../controllers/UserController');
 
-const { getUser, createUser } = require('../controllers/UserController');
+const User = require('../models/User');
 
-router.route('/').post(upload.single('profilePic'), createUser);
-router.route('/:id').get(getUser);
+const router = express.Router({ mergeParams: true });
+
+const advancedResults = require('../middleware/advancedResults');
+const { protect, authorize } = require('../middleware/auth');
+
+router.use(authorize('admin'));
+
+router.route('/').get(advancedResults(User), getUsers).post(createUser);
+
+router.route('/:id').get(getUser).put(updateUser).delete(deleteUser);
 
 module.exports = router;

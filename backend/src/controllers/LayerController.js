@@ -1,89 +1,95 @@
-const Node = require('../models/Node')
-const Layer = require('../models/Layer')
-const Map = require('../models/Map')
-const User = require('../models/User')
-const jwt = require('jsonwebtoken')
+const Map = require('../models/Map');
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('../middleware/async');
+const ErrorResponse = require('../utils/errorResponse');
 
-module.exports = {
-	createLayer(req, res) {
-        //check that user is logged in
-		jwt.verify(req.token, 'secret', async (err, authData) => {
-			if (err) {
-				res.statusCode(401)
-			} else {
-				const { map_id, layer_nodes, layer_description, start_date, end_date } = req.body
-                
-                //const map_id = await Map.findById(req.body.map_id)
+// @desc    Create a layer given a map id
+// @route   POST  /api/v1/layer/:id
+// @access  Private
+exports.createLayer = asyncHandler(async (req, res, next) => {
+    // Take out user data for layer
+    const { layer_nodes, layer_description, start_date, end_date } = req.body;
 
-				// if (!map_id) {
-				// 	return res.status(400).json({ message: 'Map does not exist!' })
-				// }
-				try {
-					const layer = await Layer.create({
-						map_id,
-                        layer_nodes, 
-                        layer_description, 
-                        start_date, 
-                        end_date
-					})
-					return res.json(layer)
-				} catch (error) {
-					return res.status(400).json({ message: error })
-				}
-			}
-		})
+    // Find map user is creating from
+    const map = await Map.findById(req.params.id);
 
-    },
-    
-    getLayerByMapId(req, res) {
-		jwt.verify(req.token, 'secret', async (err, authData) => {
-			if (err) {
-				res.sendStatus(401)
-			} else {
-				const { map_id } = req.params
-				console.log("map_id: ", map_id)
-				console.log("req.params: ", req.params)
+    // Make sure user is allowed to add to this map
+    const map_user_id = String(map.map_user_id).trim();
+    const user_id = String(req.user._id).trim();
 
-				if(map_id == undefined){
-					console.log("we're in this section")
-					try {
-						const layers = await Layer.find({}).exec()
-						if (layers) {
-							return res.json({ authData: authData, layers: layers })
-						}
-					} catch (error) {
-						return res.status(400).json({ message: 'layer_id does not exist!' })
-					}
-				}else{
-					try {
-						const layers = await Layer.find({map_id: map_id}).exec()
-						console.log("layers: ", layers)
-						if (layers) {
-							return res.json({ authData: authData, layers: layers })
-						}
-					} catch (error) {
-						return res.status(400).json({ message: 'layer_id does not exist!' })
-					}
-				}
-			}
+    if (map_user_id !== user_id) {
+        return next(
+            new ErrorResponse('Not authorised to use this resource', 401)
+        );
+    }
 
-		})
-	},
+    map.map_layers.push({
+        map_id: req.params.id,
+        layer_nodes,
+        layer_description,
+        start_date,
+        end_date,
+    });
 
-	delete(req, res) {
-		jwt.verify(req.token, 'secret', async (err) => {
-			if (err) {
-				res.statusCode(401)
-			} else {
-				const { layer_id } = req.params
-				try {
-					await Layer.findByIdAndDelete(layer_id)
-					return res.status(204).send()
+    await map.save();
 
-				} catch (error) {
-					return res.status(400).json({ message: 'No layer found with that id' })
-				}
-			}
-		})
-	}
-}
+    res.status(200).json({
+        success: true,
+        data: map,
+    });
+});
+
+// @desc    Get layers given a map id
+// @route   GET  /api/v1/layer/:id
+// @access  Private
+exports.getLayersByMapId = asyncHandler(async (req, res, next) => {
+    // Find map user is creating from
+    const map = await Map.findById(req.params.id);
+
+    // Make sure user is allowed to add to this map
+    const map_user_id = String(map.map_user_id).trim();
+    const user_id = String(req.user._id).trim();
+
+    if (map_user_id !== user_id) {
+        return next(
+            new ErrorResponse('Not authorised to use this resource', 401)
+        );
+    }
+
+    res.status(200).json({
+        success: true,
+        data: map.map_layers,
+    });
+});
+
+// @desc    Delete layer given map id (body has layer id)
+// @route   DELETE  /api/v1/layer/:id
+// @access  Private
+exports.deleteLayer = asyncHandler(async (req, res, next) => {
+    // Find map user is creating from
+    const map = await Map.findById(req.params.id);
+
+    // Make sure user is allowed to add to this map
+    const map_user_id = String(map.map_user_id).trim();
+    const user_id = String(req.user._id).trim();
+
+    if (map_user_id !== user_id) {
+        return next(
+            new ErrorResponse('Not authorised to use this resource', 401)
+        );
+    }
+
+    if (!map.map_layers.id(req.body.layer_id)) {
+        return next(new ErrorResponse('Resource not found.', 401));
+    }
+
+    // Remove layer from map
+    map.map_layers.id(req.body.layer_id).remove();
+    await map.save();
+
+    res.status(200).json({
+        success: true,
+        data: map.map_layers,
+    });
+});

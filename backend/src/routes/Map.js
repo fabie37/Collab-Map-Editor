@@ -7,9 +7,13 @@ const {
     getMaps,
     createMap,
     deleteMap,
-} = require('../controllers/Test/TestMapController');
+} = require('../controllers/MapController');
 
-router.route('/').get(getMaps).post(verifyToken, createMap);
-router.route('/:id').get(verifyToken, getMap).delete(verifyToken, deleteMap);
+const { protect } = require('../middleware/auth');
+
+router.get('/', protect, getMaps);
+router.post('/', protect, createMap);
+router.get('/:id', protect, getMap);
+router.delete('/:id', protect, deleteMap);
 
 module.exports = router;

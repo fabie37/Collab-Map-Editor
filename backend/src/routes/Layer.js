@@ -1,5 +1,17 @@
-//Layer
-routes.post('/createlayer', verifyToken, LayerController.createLayer);
-routes.post('/layerbrowser', verifyToken, LayerController.getLayerByMapId); // temporary dev page
-routes.get('/layer/:map_id?', verifyToken, LayerController.getLayerByMapId);
-routes.delete('/deletelayer/:layer_id', verifyToken, LayerController.delete); */
+const express = require('express');
+const verifyToken = require('../config/verifyToken');
+const router = express.Router();
+
+const {
+    createLayer,
+    getLayersByMapId,
+    deleteLayer,
+} = require('../controllers/LayerController');
+
+const { protect } = require('../middleware/auth');
+
+router.post('/:id', protect, createLayer);
+router.get('/:id', protect, getLayersByMapId);
+router.delete('/:id', protect, deleteLayer);
+
+module.exports = router;

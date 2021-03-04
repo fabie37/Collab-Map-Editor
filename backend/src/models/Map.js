@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 
-// New layout for map api
-// map -> [layers] -> [nodes]
-
 const NodeSchema = new mongoose.Schema({
     node_title: String,
     node_layer_id: String,
@@ -22,7 +19,10 @@ const NodeSchema = new mongoose.Schema({
 const LayerSchema = new mongoose.Schema({
     map_id: String,
     layer_nodes: [NodeSchema],
-    layer_description: String,
+    layer_description: {
+        type: String,
+        required: [true, 'Please enter a layer description'],
+    },
     start_date: Date,
     end_date: Date,
 });
@@ -32,9 +32,15 @@ const MapSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
-    map_title: String,
-    map_layers: { type: [LayerSchema], default: () => ({}) },
-    map_type: String,
+    map_title: {
+        type: String,
+        required: [true, 'Please enter a map title'],
+    },
+    map_layers: [LayerSchema],
+    map_type: {
+        type: String,
+        default: 'None',
+    },
     is_public: Boolean,
 });
 

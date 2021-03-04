@@ -1,99 +1,83 @@
 const Map = require('../models/Map');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const asyncHandler = require('../middleware/async');
+const ErrorResponse = require('../utils/errorResponse');
 
 // @desc    Get all maps
 // @route   GET  /api/v1/maps
-// @access  Private
-exports.getMaps = async (req, res) => {
-    jwt.verify(req.token, 'secret', async (err, authData) => {
-        if (err) {
-            res.sendStatus(401);
-        } else {
-            const maps = await Map.find({});
-            return res.json({ authData, maps });
-        }
+// @access  Private/User
+exports.getMaps = asyncHandler(async (req, res, next) => {
+    const maps = await Map.find({ map_user_id: req.user._id });
+
+    res.status(200).json({
+        sucess: true,
+        data: maps,
     });
-};
+});
 
 // @desc    Get a single map
 // @route   GET  /api/v1/maps/:id
-// @access  Private
-exports.getMap = async (req, res) => {
-    jwt.verify(req.token, 'secret', async (err, authData) => {
-        if (err) {
-            res.sendStatus(401);
-        } else {
-            const { map_id } = req.params;
+// @access  Private/User
+exports.getMap = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const map = await Map.findById(id);
 
-            try {
-                const maps = await Map.findById(map_id);
+    // If map if not created by the same user accessing it, reject it for now.
+    if (map.map_user_id != req.user._id) {
+        return next(
+            new ErrorResponse('Not authorized to access this route', 401)
+        );
+    }
 
-                if (maps) {
-                    return res.json({ authData: authData, maps: maps });
-                }
-            } catch (error) {
-                return res
-                    .status(400)
-                    .json({ message: 'Map_id does not exist!' });
-            }
-        }
+    res.status(200).json({
+        sucess: true,
+        data: map,
     });
-};
+});
 
 // @desc    Create a map
 // @route   Post  /api/v1/maps
-// @access  Private
-exports.createMap = async (req, res) => {
-    //check that user is logged in
-    jwt.verify(req.token, 'secret', async (err, authData) => {
-        if (err) {
-            res.statusCode(401);
-        } else {
-            const { map_title, map_layers, map_type, is_public } = req.body;
-
-            const map_user_id = await User.findById(authData.user._id);
-
-            if (!map_user_id) {
-                return res
-                    .status(400)
-                    .json({ message: 'User does not exist!' });
-            }
-
-            try {
-                const map = await Map.create({
-                    map_user_id: authData.user._id,
-                    map_title,
-                    map_layers: [],
-                    map_type,
-                    is_public,
-                });
-
-                return res.json(map);
-            } catch (error) {
-                return res.status(400).json({ message: error });
-            }
-        }
+// @access  Private/User
+exports.createMap = asyncHandler(async (req, res, next) => {
+    const { map_title, map_layers, map_type, is_public } = req.body;
+    const map = await Map.create({
+        map_user_id: req.user._id,
+        map_title,
+        map_type,
+        map_layers: [],
+        is_public,
     });
-};
+
+    res.status(200).json({
+        sucess: true,
+        data: map,
+    });
+});
 
 // @desc    Remove a map
 // @route   Post  /api/v1/maps/:id
-// @access  Private
-exports.deleteMap = async (req, res) => {
-    jwt.verify(req.token, 'secret', async (err) => {
-        if (err) {
-            res.statusCode(401);
-        } else {
-            const { map_id } = req.params;
-            try {
-                await Map.findByIdAndDelete(map_id);
-                return res.status(204).send();
-            } catch (error) {
-                return res
-                    .status(400)
-                    .json({ message: 'No map found with that id' });
-            }
-        }
+// @access  Private/User
+exports.deleteMap = asyncHandler(async (req, res, next) => {
+    const map = await Map.findById(req.params.id);
+
+    if (!map) {
+        return next(new ErrorResponse('Resource Not Found', 401));
+    }
+
+    const map_user_id = String(map.map_user_id).trim();
+    const user_id = String(req.user._id).trim();
+
+    if (map_user_id !== user_id) {
+        return next(
+            new ErrorResponse('Not authorised to use this resource', 401)
+        );
+    }
+
+    await Map.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+        sucess: true,
+        data: '',
     });
-};
+});
