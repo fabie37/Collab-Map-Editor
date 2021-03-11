@@ -47,7 +47,7 @@ app.use(xss());
 // Rate Limiting
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 Mins
-    max: 100,
+    max: 5000,
 });
 app.use(limiter);
 
@@ -64,14 +64,12 @@ app.use('/files', express.static(path.resolve(__dirname, '..', 'files')));
 const MapRouter = require('./routes/Map');
 const DashBoardRouter = require('./routes/DashBoard');
 const UserRouter = require('./routes/User');
-const LoginRouter = require('./routes/Login');
 const AuthRouter = require('./routes/Auth');
 
 // Mount Routers
 app.use('/api/v1/maps', MapRouter);
 app.use('/api/v1/dashboard', DashBoardRouter);
 app.use('/api/v1/user', UserRouter);
-app.use('/api/v1/login', LoginRouter);
 app.use('/api/v1/auth', AuthRouter);
 
 // Error Handler Middleware (after routes)

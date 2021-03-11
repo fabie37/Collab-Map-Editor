@@ -15,13 +15,19 @@ exports.createNode = asyncHandler(async (req, res, next) => {
     var map = req.map;
 
     // Get particular layer and create a node
-    map.map_layers.id(layer_id).layer_nodes.push(req.body);
+    const newNode = map.map_layers.id(layer_id).layer_nodes.create({
+        ...req.body,
+        layer_id: layer_id,
+        node_user_id: req.user._id,
+    });
+
+    map.map_layers.id(layer_id).layer_nodes.push(newNode);
 
     await map.save();
 
     res.status(200).json({
         success: true,
-        data: map,
+        data: newNode,
     });
 });
 
@@ -103,12 +109,13 @@ exports.deleteNode = asyncHandler(async (req, res, next) => {
     }
 
     // Remove Node
+    const oldNode = map.map_layers.id(layer_id).layer_nodes.id(node_id);
     map.map_layers.id(layer_id).layer_nodes.id(node_id).remove();
 
     await map.save();
 
     res.status(200).json({
         success: true,
-        data: map.map_layers,
+        data: oldNode,
     });
 });

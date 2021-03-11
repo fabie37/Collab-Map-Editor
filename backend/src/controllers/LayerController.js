@@ -14,7 +14,7 @@ exports.createLayer = asyncHandler(async (req, res, next) => {
     // Middleware grabs map for us (see auth.js in middleware)
     var map = req.map;
 
-    map.map_layers.push({
+    const new_layer = map.map_layers.create({
         map_id: req.params.id,
         layer_nodes,
         layer_description,
@@ -22,11 +22,13 @@ exports.createLayer = asyncHandler(async (req, res, next) => {
         end_date,
     });
 
+    map.map_layers.push(new_layer);
+
     await map.save();
 
     res.status(200).json({
         success: true,
-        data: map,
+        data: new_layer,
     });
 });
 
@@ -63,7 +65,7 @@ exports.updateLayer = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        data: map,
+        data: map.map_layers.id(layer_id),
     });
 });
 
@@ -82,11 +84,12 @@ exports.deleteLayer = asyncHandler(async (req, res, next) => {
     }
 
     // Remove layer from map
+    const removedLayer = map.map_layers.id(layer_id);
     map.map_layers.id(layer_id).remove();
     await map.save();
 
     res.status(200).json({
         success: true,
-        data: map.map_layers,
+        data: removedLayer,
     });
 });

@@ -62,7 +62,7 @@ exports.logout = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        data: {},
+        data: { msg: 'User Logged Out' },
     });
 });
 
@@ -90,7 +90,7 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 // @route       POST /api/v1/auth/me
 // @access      Private
 exports.getMe = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select('-password');
 
     res.status(200).json({
         success: true,
@@ -203,8 +203,18 @@ const sendTokenResponse = (user, statusCode, res) => {
         options.secure = true;
     }
 
-    res.status(statusCode).cookie('token', token, options).json({
-        success: true,
-        token,
-    });
+    res.status(statusCode)
+        .cookie('token', token, options)
+        .json({
+            success: true,
+            data: {
+                token: token,
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    role: user.role,
+                    email: user.email,
+                },
+            },
+        });
 };

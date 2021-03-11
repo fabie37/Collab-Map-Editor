@@ -3,8 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { AuthProvider } from './context/AuthState';
+import { MapProvider } from './context/MapState';
 
 ReactDOM.render(
-  <App />, document.getElementById('root')
+    <AuthProvider>
+        <MapProvider>
+            <App />
+        </MapProvider>
+    </AuthProvider>,
+    document.getElementById('root')
 );
-

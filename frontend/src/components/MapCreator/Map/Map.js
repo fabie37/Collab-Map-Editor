@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import './Map.css';
 import * as ol from 'ol';
 import XYZ from 'ol/source/XYZ.js';
@@ -7,11 +7,14 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
+import * as olProj from 'ol/proj';
 import { Icon, Style } from 'ol/style';
 import marker from '../Tools/node.png';
-import api from '../../../services/api';
+import { MapContext } from '../../../context/MapState';
 
-const Map = ({ children, map, mapRef, nodes, setNodes }) => {
+const Map = ({ children, map, mapRef }) => {
+    const { createNode, deleteNode, workingMap } = useContext(MapContext);
+
     // Effect Hooks
     // Map Initialization: Runs only on initalisation
     const user = localStorage.getItem('user');
@@ -38,44 +41,61 @@ const Map = ({ children, map, mapRef, nodes, setNodes }) => {
         let mapObject = new ol.Map(options);
         map.current = mapObject;
 
-
-        
-        
-
         map.current.on('pointermove', showCursorOnFeatureHover);
 
         return () => {
             mapObject.setTarget(undefined);
             map.current.removeEventListener(showCursorOnFeatureHover);
         };
-        
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
+    // Update Map Every Time we see a something change in the workingMap
+    //
     useEffect(() => {
-        console.log(nodes)
-        loadNodes(nodes);
-    }, [nodes]);
+        if (workingMap) {
+            workingMap.map_layers.forEach((layer) => {
+                renderLayer(layer);
+            });
+        }
+    }, [workingMap]);
 
-    // Show Cursor
-    const showCursorOnFeatureHover = (e) => {
-        var hit = e.map.hasFeatureAtPixel(e.pixel);
-        e.map.getViewport().style.cursor = hit ? 'pointer' : '';
-    };
+    // Load in a layer
+    const renderLayer = (layer) => {
+        let currentlyLoadedFeatures = map.current
+            .getLayers()
+            .array_[1].getSource()
+            .getFeatures();
 
-    // Load in nodes that have been previously saved
-    const loadNodes = (nodes) => {
-        console.log("loadNodes " + nodes.toString())
-        for (var i = 0; i < nodes.length; i++) {
-            createNode(nodes[i]);
+        let featureMap = {};
+        currentlyLoadedFeatures.forEach((feature) => {
+            featureMap[feature.getId()] = feature;
+        });
+
+        console.log(currentlyLoadedFeatures);
+
+        layer.layer_nodes.forEach((node) => {
+            if (!featureMap[node._id]) {
+                renderNode(node);
+            } else {
+                delete featureMap[node._id];
+            }
+        });
+
+        for (const key in featureMap) {
+            map.current
+                .getLayers()
+                .array_[1].getSource()
+                .removeFeature(featureMap[key]);
         }
     };
 
     // Method For Creating a node
-    const createNode = (node) => {
+    const renderNode = (node) => {
+        console.log(node);
         var icon = new Feature({
-            geometry: new Point(node.coords),
+            geometry: new Point(olProj.fromLonLat(node.node_coordinates)),
             id: node._id,
         });
 
@@ -92,9 +112,44 @@ const Map = ({ children, map, mapRef, nodes, setNodes }) => {
         );
         map.current.getLayers().array_[1].getSource().addFeature(icon);
     };
+    // Show Cursor
+    const showCursorOnFeatureHover = (e) => {
+        var hit = e.map.hasFeatureAtPixel(e.pixel);
+        e.map.getViewport().style.cursor = hit ? 'pointer' : '';
+    };
+
+    function grn(min, max) {
+        var highlightedNumber = (Math.random() * (max - min) + min).toFixed(3);
+
+        return highlightedNumber;
+    }
 
     return (
         <div className='map' ref={mapRef}>
+            <button
+                onClick={() =>
+                    createNode(workingMap._id, workingMap.map_layers[0]._id, {
+                        node_title: 'Hello world',
+                        node_coordinates: [grn(-179, 180), grn(-89, 90)],
+                    })
+                }
+                style={{ float: 'right' }}
+            >
+                Random Add
+            </button>
+            <button
+                onClick={() => {
+                    console.log(workingMap.map_layers[0].layer_nodes[0]._id);
+                    deleteNode(
+                        workingMap._id,
+                        workingMap.map_layers[0]._id,
+                        workingMap.map_layers[0].layer_nodes[0]._id
+                    );
+                }}
+                style={{ float: 'right' }}
+            >
+                Delete
+            </button>
             {children}
         </div>
     );

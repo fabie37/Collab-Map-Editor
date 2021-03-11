@@ -23,8 +23,11 @@ exports.getMap = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const map = await Map.findById(id);
 
+    const map_user_id = String(map.map_user_id).trim();
+    const user_id = String(req.user._id).trim();
+
     // If map if not created by the same user accessing it, reject it for now.
-    if (map.map_user_id != req.user._id) {
+    if (map_user_id != user_id) {
         return next(
             new ErrorResponse('Not authorized to access this route', 401)
         );
@@ -73,11 +76,10 @@ exports.deleteMap = asyncHandler(async (req, res, next) => {
             new ErrorResponse('Not authorised to use this resource', 401)
         );
     }
-
     await Map.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
         sucess: true,
-        data: '',
+        data: map,
     });
 });
