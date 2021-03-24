@@ -86,18 +86,14 @@ const LayerGrid = () => {
                         <LayerItem
                             isEditMode={isEditMode}
                             itemClass={itemClass}
+                            map_id={mapID}
+                            layer_id={layer._id}
                             description={layer.layer_description}
+                            updateLayer={updateLayer}
                             deleteLayer={() => {
                                 checkLayerDeleted(layer._id);
                                 clearToolBarContext();
                                 deleteLayer(workingMap._id, layer._id);
-                            }}
-                            updateLayer={(formData) => {
-                                updateLayer(
-                                    workingMap._id,
-                                    layer._id,
-                                    formData
-                                );
                             }}
                             isOnlyLayer={isOnlyLayer}
                             onEditClick={(e) => {

@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from 'react';
+import React, { useRef, useContext, useEffect } from 'react';
 import './MapContainer.css';
 import Map from '../Map/Map';
 import ToolBar from '../ToolBar/ToolBar';
@@ -30,7 +30,45 @@ const MapContainer = () => {
     } = useContext(MapContext);
     const { isEditMode } = useContext(MapModeContext);
     const { workingLayer } = useContext(LayerGridContext);
-    const { selectedNode } = useContext(InfoBarContext);
+    const { selectedNode, setSelectedNode } = useContext(InfoBarContext);
+
+    // Code To Handle Viewing Nodes When in View Mode
+    // Listeners:
+    const selectClick = () => {
+        map.current.on('click', focusNode);
+    };
+
+    const removeSelectClick = () => {
+        map.current.removeEventListener('click', focusNode);
+    };
+
+    // Main View Function:
+    const focusNode = (event) => {
+        var feature = event.map.forEachFeatureAtPixel(
+            event.pixel,
+            function (feature) {
+                return feature;
+            }
+        );
+
+        if (feature) {
+            setSelectedNode(feature.getId());
+        }
+    };
+
+    // When Map Mode Changes
+    useEffect(() => {
+        if (map === null || map.curent === null) {
+            return;
+        }
+        if (!isEditMode) {
+            selectClick();
+        }
+        return () => {
+            removeSelectClick();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isEditMode]);
 
     return (
         <div className='map-container'>
@@ -44,58 +82,3 @@ const MapContainer = () => {
 };
 
 export default MapContainer;
-
-/*
-    // Toolbar Action State
-    let [toolBarState, setToolBarState] = useState({
-        Add: false,
-        Remove: false,
-        Move: false,
-    });
-
-    // When a tool is clicked on
-    const setCurrentToolBar = (evt) => {
-        let toolBarStates = { Add: false, Remove: false, Move: false };
-        let target = evt.target.id;
-        toolBarStates[target] = true;
-        setToolBarState(toolBarStates);
-        console.log(toolBarStates);
-        console.log(nodes);
-    };
-
-    // Node State
-    let [nodes, setNodes] = useState([]);
-    let [currentNode, setCurrentNode] = useState(null);
-
-    const selectNode = (uid) => {
-        let selectedNode = nodes.filter((selectedNode) => {
-            return selectedNode.uid == uid;
-        });
-
-        setCurrentNode(selectedNode[0]);
-    };
-
-*/
-
-/*            
-
-            <ToolBar
-                setTool={setCurrentToolBar}
-                map={map}
-                toolBarState={toolBarState}
-                addNode={addNode}
-                removeNode={removeNode}
-                selectNode={selectNode}
-                updateNodeCoords={updateNodeCoords}
-                nodes={nodes}
-                onNode={onNode}
-            ></ToolBar>
-            <div className='storyboard'></div>
-            <map></map>
-            <InfoBar
-                map={map}
-                removeNode={removeNode}
-                setCurrentNode={setCurrentNode}
-                node={currentNode}
-                updateNode={updateNode}
-            ></InfoBar>  */

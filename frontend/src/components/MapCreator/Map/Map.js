@@ -211,35 +211,3 @@ const Map = ({ children, map, mapRef }) => {
     );
 };
 export default Map;
-
-/*
- <div className='map' ref={mapRef}>
-            <button
-                onClick={() =>
-                    createNode(workingMap._id, workingLayer, {
-                        node_title: 'Hello world',
-                        node_coordinates: [grn(-179, 180), grn(-89, 90)],
-                    })
-                }
-                style={{ float: 'right' }}
-            >
-                Random Add
-            </button>
-            <button
-                onClick={() => {
-                    console.log(workingMap.map_layers[0].layer_nodes[0]._id);
-                    deleteNode(
-                        workingMap._id,
-                        workingLayer,
-                        workingMap.map_layers.find(
-                            (layer) => layer._id == workingLayer
-                        ).layer_nodes[0]._id
-                    );
-                }}
-                style={{ float: 'right' }}
-            >
-                Delete
-            </button>
-            {children}
-        </div>
- */
