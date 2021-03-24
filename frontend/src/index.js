@@ -5,11 +5,17 @@ import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './context/AuthState';
 import { MapProvider } from './context/MapState';
+import { LayerGridProvider } from './context/LayerGridState';
+import { MapModeProvider } from './context/MapModeState';
 
 ReactDOM.render(
     <AuthProvider>
         <MapProvider>
-            <App />
+            <MapModeProvider>
+                <LayerGridProvider>
+                    <App />
+                </LayerGridProvider>
+            </MapModeProvider>
         </MapProvider>
     </AuthProvider>,
     document.getElementById('root')

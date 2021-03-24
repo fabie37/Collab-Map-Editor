@@ -39,7 +39,14 @@ const MapSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please enter a map title'],
     },
-    map_layers: [LayerSchema],
+    map_layers: {
+        type: [LayerSchema],
+        default: [
+            {
+                layer_description: 'My First Layer',
+            },
+        ],
+    },
     map_type: {
         type: String,
         default: 'None',

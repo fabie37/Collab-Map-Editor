@@ -48,7 +48,6 @@ exports.createMap = asyncHandler(async (req, res, next) => {
         map_user_id: req.user._id,
         map_title,
         map_type,
-        map_layers: [],
         is_public,
     });
 

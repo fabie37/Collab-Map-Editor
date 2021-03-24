@@ -3,8 +3,10 @@ import './MapContainer.css';
 import Map from '../Map/Map';
 import ToolBar from '../ToolBar/ToolBar';
 import InfoBar from '../InfoBar/InfoBar';
+import LayerGrid from '../LayerGrid/LayerGrid';
 import { AuthContext } from '../../../context/AuthState';
 import { MapContext } from '../../../context/MapState';
+import ModeToggle from '../ModeToggle/ModeToggle';
 
 const MapContainer = () => {
     // References to map
@@ -26,6 +28,8 @@ const MapContainer = () => {
 
     return (
         <div className='map-container'>
+            <LayerGrid></LayerGrid>
+            <ModeToggle></ModeToggle>
             <Map map={map} mapRef={mapRef}></Map>
         </div>
     );
@@ -79,7 +83,7 @@ export default MapContainer;
                 onNode={onNode}
             ></ToolBar>
             <div className='storyboard'></div>
-            <map></map
+            <map></map>
             <InfoBar
                 map={map}
                 removeNode={removeNode}

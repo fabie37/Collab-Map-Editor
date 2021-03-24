@@ -137,6 +137,7 @@ export default (state, action) => {
             newMap = state.workingMap;
             newLayers = newMap.map_layers;
             newLayers = [...newLayers, action.payload.data];
+            newMap = { ...state.workingMap };
             newMap.map_layers = newLayers;
             return {
                 ...state,
@@ -155,6 +156,7 @@ export default (state, action) => {
             newLayers = newMap.map_layers.filter(
                 (layer) => layer._id != action.payload.data._id
             );
+            newMap = { ...state.workingMap };
             newMap.map_layers = newLayers;
             return {
                 ...state,

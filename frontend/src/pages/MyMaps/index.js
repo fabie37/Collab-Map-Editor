@@ -1,6 +1,13 @@
 import React, { useContext, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import { Container } from 'reactstrap';
+import {
+    Container,
+    Card,
+    CardTitle,
+    CardBody,
+    CardText,
+    Button,
+} from 'reactstrap';
 import ItemCard from '../../components/ItemCard/ItemCard';
 import Spinner from '../../components/Spinner/Spinner';
 import { AuthContext } from '../../context/AuthState';
@@ -51,14 +58,30 @@ const MyMaps = ({ history }) => {
                     <div className='my-maps__cards-container'>
                         {userMaps && userMaps.length != 0 ? (
                             userMaps.map((map) => (
-                                <ItemCard
-                                    title={map.map_title}
-                                    subtitle={map.map_type}
-                                    primaryName='Delete'
-                                    primaryAction={() => deleteMap(map._id)}
-                                    secondaryName='Edit'
-                                    secondaryAction={() => editMap(map._id)}
-                                ></ItemCard>
+                                <Card>
+                                    <CardBody>
+                                        <CardTitle tag='h2'>
+                                            {map.map_title}
+                                        </CardTitle>
+                                        <CardText>{map.map_type}</CardText>
+                                        <Button
+                                            color='secondary'
+                                            onClick={() => {
+                                                deleteMap(map._id);
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
+                                        <Button
+                                            color='primary'
+                                            onClick={() => {
+                                                editMap(map._id);
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </CardBody>
+                                </Card>
                             ))
                         ) : (
                             <h1>You have no Maps</h1>
@@ -71,3 +94,12 @@ const MyMaps = ({ history }) => {
 };
 
 export default MyMaps;
+
+/*<ItemCard
+title={map.map_title}
+subtitle={map.map_type}
+primaryName='Delete'
+primaryAction={() => deleteMap(map._id)}
+secondaryName='Edit'
+secondaryAction={() => editMap(map._id)}
+></ItemCard> */
