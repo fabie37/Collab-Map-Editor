@@ -1,69 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import ActionBar from './ActionBar/ActionBar';
 import EditBar from './EditBar/EditBar';
 import './InfoBar.css';
 import InfoDisplay from './InfoDisplay/InfoDisplay';
 import InfoEditor from './InfoEditor/InfoEditor';
+import { InfoBarContext } from '../../../context/InfoBarState';
+import { MapModeContext } from '../../../context/MapModeState';
+import { MapContext } from '../../../context/MapState';
 
-function InfoBar({ node, setCurrentNode, removeNode, map, updateNode }) {
-    let [userClosed, setUserClosed] = useState(false);
-    let [show, setShow] = useState(false);
-    let [isEditing, setIsEditing] = useState(false);
+function InfoBar() {
+    const { selectedNode, isEditing, clearInfoBarContext } = useContext(
+        InfoBarContext
+    );
+    const { workingMap } = useContext(MapContext);
+    const { isEditMode } = useContext(MapModeContext);
 
-    const showInfoBar = () => {
-        if (show) {
-            return 'show';
-        } else {
-            return 'hide';
-        }
-    };
+    const [node, setNode] = useState(null);
 
-    // Effects that change the condition of whether to show the card or not
+    // Get node from selectedNode ID
     useEffect(() => {
-        if (node == null) {
-            setShow(false);
+        let found = null;
+        for (let layer of workingMap.map_layers) {
+            found = layer.layer_nodes.find((n) => n._id === selectedNode);
+            if (found) {
+                break;
+            }
+        }
+        if (found === null || found === undefined) {
+            clearInfoBarContext();
+            setNode(null);
         } else {
-            setShow(true);
+            setNode(found);
         }
-    }, [node]);
-
-    useEffect(() => {
-        if (userClosed == true) {
-            setIsEditing(false);
-            setCurrentNode(null);
-            setUserClosed(false);
-        }
-    }, [userClosed]);
-
-    // Conditional Rending: Editing or not
-    let display;
-    let bar;
-    if (isEditing) {
-        display = <InfoEditor node={node}></InfoEditor>;
-        bar = (
-            <EditBar
-                node={node}
-                setIsEditing={setIsEditing}
-                updateNode={updateNode}
-            ></EditBar>
-        );
-    } else {
-        display = <InfoDisplay node={node}></InfoDisplay>;
-        bar = (
-            <ActionBar
-                node={node}
-                setUserClosed={setUserClosed}
-                removeNode={removeNode}
-                map={map}
-                setIsEditing={setIsEditing}
-            ></ActionBar>
-        );
-    }
+    }, [selectedNode, workingMap]);
 
     return (
-        <div className={showInfoBar()}>
-            {display}
-            {bar}
+        <div className='infobar'>
+            {node ? (
+                isEditing ? (
+                    <InfoEditor node={node} />
+                ) : (
+                    <InfoDisplay node={node} />
+                )
+            ) : null}
+            {node ? (
+                isEditMode ? (
+                    isEditing ? (
+                        <EditBar node={node} />
+                    ) : (
+                        <ActionBar node={node} />
+                    )
+                ) : null
+            ) : null}
         </div>
     );
 }

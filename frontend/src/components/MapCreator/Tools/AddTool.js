@@ -4,12 +4,16 @@ import { toLonLat } from 'ol/proj';
 import { easeIn } from 'ol/easing';
 import { MapContext } from '../../../context/MapState';
 import { LayerGridContext } from '../../../context/LayerGridState';
+import { InfoBarContext } from '../../../context/InfoBarState';
 import { TOOLBAR_ADD } from '../../../actions/types';
 
 const AddTool = ({ map, activeTool }) => {
     // API Calls
     const { createNode, workingMap } = useContext(MapContext);
     const { workingLayer } = useContext(LayerGridContext);
+    const { setSelectedNode, clearInfoBarContext, setEditMode } = useContext(
+        InfoBarContext
+    );
 
     // Tool ID
     const id = 'Add';
@@ -27,9 +31,14 @@ const AddTool = ({ map, activeTool }) => {
     // Main Tool Function:
     const executeTool = async (event) => {
         const coordinates = toLonLat(event.coordinate);
-        await createNode(workingMap._id, workingLayer, {
+        const node = await createNode(workingMap._id, workingLayer, {
             node_coordinates: coordinates,
         });
+        if (node) {
+            clearInfoBarContext();
+            setSelectedNode(node._id);
+            setEditMode();
+        }
     };
 
     // When State of Toolbar Changes:

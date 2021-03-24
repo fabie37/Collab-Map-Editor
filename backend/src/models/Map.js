@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const NodeSchema = new mongoose.Schema({
-    node_title: String,
+    node_title: { type: String, default: 'New Node' },
     node_layer_id: String,
     node_user_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -16,7 +16,7 @@ const NodeSchema = new mongoose.Schema({
     node_coordinates: Array,
     node_start_date: Date,
     node_end_date: Date,
-    node_description: String,
+    node_description: { type: String, default: 'Node Description' },
 });
 
 const LayerSchema = new mongoose.Schema({

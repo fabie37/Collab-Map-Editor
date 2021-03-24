@@ -241,6 +241,7 @@ export const MapProvider = ({ children }) => {
                 config
             );
             dispatch({ type: NODE_CREATE_SUCCESS, payload: res.data });
+            return res.data.data;
         } catch (error) {
             alert(error.response.data.error);
             dispatch({ type: NODE_CREATE_FAILURE });

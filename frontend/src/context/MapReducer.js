@@ -201,7 +201,7 @@ export default (state, action) => {
             );
             newLayers = [...newLayers, newLayer];
 
-            newMap = state.workingMap;
+            newMap = { ...state.workingMap };
             newMap.map_layers = newLayers;
             return {
                 ...state,

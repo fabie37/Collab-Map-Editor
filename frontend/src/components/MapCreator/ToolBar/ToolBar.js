@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import AddTool from '../Tools/AddTool';
 import RemoveTool from '../Tools/RemoveTool';
 import MoveTool from '../Tools/MoveTool';
 import SelectTool from '../Tools/SelectTool';
 import { ToolBarContext } from '../../../context/ToolbarState';
+
 import './ToolBar.css';
 
 function ToolBar({ map }) {

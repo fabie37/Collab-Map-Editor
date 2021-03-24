@@ -8,6 +8,7 @@ import { MapProvider } from './context/MapState';
 import { LayerGridProvider } from './context/LayerGridState';
 import { MapModeProvider } from './context/MapModeState';
 import { ToolbarProvider } from './context/ToolbarState';
+import { InfoBarProvider } from './context/InfoBarState';
 
 ReactDOM.render(
     <AuthProvider>
@@ -15,7 +16,9 @@ ReactDOM.render(
             <MapModeProvider>
                 <LayerGridProvider>
                     <ToolbarProvider>
-                        <App />
+                        <InfoBarProvider>
+                            <App />
+                        </InfoBarProvider>
                     </ToolbarProvider>
                 </LayerGridProvider>
             </MapModeProvider>

@@ -1,13 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { TOOLBAR_SELECT } from '../../../actions/types';
+import { MapContext } from '../../../context/MapState';
+import { LayerGridContext } from '../../../context/LayerGridState';
+import { InfoBarContext } from '../../../context/InfoBarState';
 import Tool from './Tool';
 
-const SelectTool = ({ onClick, map, toolBarState, selectNode }) => {
+const SelectTool = ({ map, activeTool }) => {
+    // API Calls
+    const { workingMap } = useContext(MapContext);
+    const { workingLayer } = useContext(LayerGridContext);
+    const { setSelectedNode } = useContext(InfoBarContext);
+
     // Properties:
     const id = 'Select';
     const toolType = TOOLBAR_SELECT;
-
-    /*
 
     // Listeners:
     const selectClick = () => {
@@ -28,26 +34,23 @@ const SelectTool = ({ onClick, map, toolBarState, selectNode }) => {
         );
 
         if (feature) {
-            console.log(feature.getId());
-            selectNode(feature.getId());
+            setSelectedNode(feature.getId());
         }
     };
 
     // When State of Toolbar Changes:
     useEffect(() => {
-        if (map === null) {
+        if (map === null || map.curent === null) {
             return;
         }
-        if (toolBarState[id] === true) {
+        if (activeTool === toolType) {
             selectClick();
         }
         return () => {
             removeSelectClick();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [toolBarState]);
-
-    */
+    }, [activeTool]);
 
     return <Tool id={id} toolType={toolType}></Tool>;
 };

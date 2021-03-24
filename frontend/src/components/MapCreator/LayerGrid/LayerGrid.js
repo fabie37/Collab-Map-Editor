@@ -3,6 +3,8 @@ import LayerItem from '../LayerItem/LayerItem';
 import { MapContext } from '../../../context/MapState';
 import { LayerGridContext } from '../../../context/LayerGridState';
 import { MapModeContext } from '../../../context/MapModeState';
+import { ToolBarContext } from '../../../context/ToolbarState';
+import { InfoBarContext } from '../../../context/InfoBarState';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import './LayerGrid.css';
@@ -24,6 +26,8 @@ const LayerGrid = () => {
         toggleLayer,
     } = useContext(LayerGridContext);
     const { isEditMode } = useContext(MapModeContext);
+    const { clearToolBarContext } = useContext(ToolBarContext);
+    const { clearInfoBarContext } = useContext(InfoBarContext);
 
     // If there is only one layer, refuse user to delete it
     useEffect(() => {
@@ -37,12 +41,14 @@ const LayerGrid = () => {
     // If mode changed, clear context
     useEffect(() => {
         clearLayerGridContext();
+        clearToolBarContext();
         setMapID(workingMap._id);
     }, [isEditMode]);
 
     // If a new map is loaded, clear previous context
     if (workingMap._id != mapID) {
         clearLayerGridContext();
+        clearToolBarContext();
         setMapID(workingMap._id);
     }
 
@@ -83,6 +89,7 @@ const LayerGrid = () => {
                             description={layer.layer_description}
                             deleteLayer={() => {
                                 checkLayerDeleted(layer._id);
+                                clearToolBarContext();
                                 deleteLayer(workingMap._id, layer._id);
                             }}
                             updateLayer={(formData) => {
@@ -94,6 +101,8 @@ const LayerGrid = () => {
                             }}
                             isOnlyLayer={isOnlyLayer}
                             onEditClick={(e) => {
+                                clearInfoBarContext();
+                                clearToolBarContext();
                                 setWorkingLayer(layer._id);
                             }}
                             onViewClick={(e) => {
