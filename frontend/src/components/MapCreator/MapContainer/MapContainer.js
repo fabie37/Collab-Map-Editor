@@ -6,6 +6,8 @@ import InfoBar from '../InfoBar/InfoBar';
 import LayerGrid from '../LayerGrid/LayerGrid';
 import { AuthContext } from '../../../context/AuthState';
 import { MapContext } from '../../../context/MapState';
+import { MapModeContext } from '../../../context/MapModeState';
+import { LayerGridContext } from '../../../context/LayerGridState';
 import ModeToggle from '../ModeToggle/ModeToggle';
 
 const MapContainer = () => {
@@ -25,11 +27,14 @@ const MapContainer = () => {
         updateLayer,
         deleteLayer,
     } = useContext(MapContext);
+    const { isEditMode } = useContext(MapModeContext);
+    const { workingLayer } = useContext(LayerGridContext);
 
     return (
         <div className='map-container'>
             <LayerGrid></LayerGrid>
             <ModeToggle></ModeToggle>
+            {isEditMode && workingLayer && <ToolBar map={map}></ToolBar>}
             <Map map={map} mapRef={mapRef}></Map>
         </div>
     );

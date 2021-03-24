@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ToolBarContext } from '../../../context/ToolbarState';
 
-const Tool = ({ id, onClick }) => {
+const Tool = ({ id, toolType }) => {
+    const { setActiveTool } = useContext(ToolBarContext);
+
     return (
-        <button className='toolbar-btn' type='button' id={id} onClick={onClick}>
+        <button
+            className='toolbar-btn'
+            type='button'
+            id={id}
+            onClick={() => setActiveTool(toolType)}
+        >
             {id}
         </button>
     );

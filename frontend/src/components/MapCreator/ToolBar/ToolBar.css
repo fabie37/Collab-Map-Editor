@@ -1,13 +1,13 @@
 .toolbar {
-    grid-row-start: 1;
-    grid-row-end: 3;
-    grid-column-start: 1;
-    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 2;
+    grid-column-start: 2;
+    grid-column-end: 3;
     background-color: #ffffff00;
     z-index: 99;
     opacity: 100%;
     align-self: end;
-    margin-left: 10ex;
+    justify-self: start;
     margin-bottom: 5ex;
 }
 

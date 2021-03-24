@@ -1,68 +1,52 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Tool from './Tool';
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
-import { Icon, Style } from 'ol/style';
-import marker from './node.png';
+import { toLonLat } from 'ol/proj';
 import { easeIn } from 'ol/easing';
+import { MapContext } from '../../../context/MapState';
+import { LayerGridContext } from '../../../context/LayerGridState';
+import { TOOLBAR_ADD } from '../../../actions/types';
 
-const AddTool = ({ onClick, map, toolBarState, addNode }) => {
+const AddTool = ({ map, activeTool }) => {
+    // API Calls
+    const { createNode, workingMap } = useContext(MapContext);
+    const { workingLayer } = useContext(LayerGridContext);
+
     // Tool ID
-    let id = 'Add';
+    const id = 'Add';
+    const toolType = TOOLBAR_ADD;
 
     // Listeners:
     const addClick = () => {
-        map.current.on('click', createNode);
+        map.current.on('click', executeTool);
     };
 
     const removeAddClick = () => {
-        map.current.removeEventListener('click', createNode);
+        map.current.removeEventListener('click', executeTool);
     };
 
     // Main Tool Function:
-    const createNode = async (event) => {
-        const newNode = await addNode(event.coordinate);
-        console.log("newNode: " + newNode)
-        var icon = new Feature({
-            geometry: new Point(newNode.coords),
-            id: newNode.uid,
-        });
-
-        icon.setId(newNode.uid);
-
-        icon.setStyle(
-            new Style({
-                image: new Icon({
-                    src: marker,
-                    scale: 0.1,
-                }),
-                fill: 'white',
-            })
-        );
-
-        map.current.getLayers().array_[1].getSource().addFeature(icon);
-        event.map.getView().animate({
-            center: event.coordinate,
-            duration: 200,
-            easing: easeIn,
+    const executeTool = async (event) => {
+        const coordinates = toLonLat(event.coordinate);
+        await createNode(workingMap._id, workingLayer, {
+            node_coordinates: coordinates,
         });
     };
 
     // When State of Toolbar Changes:
     useEffect(() => {
-        if (map === null) {
+        if (map == null || map.current == null) {
             return;
         }
-        if (toolBarState[id] === true) {
+
+        if (activeTool === toolType) {
             addClick();
         }
         return () => {
             removeAddClick();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [toolBarState]);
+    }, [activeTool]);
 
-    return <Tool id={id} onClick={onClick}></Tool>;
+    return <Tool id={id} toolType={toolType}></Tool>;
 };
 
 export default AddTool;

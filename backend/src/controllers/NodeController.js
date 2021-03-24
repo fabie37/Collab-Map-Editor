@@ -79,9 +79,12 @@ exports.updateNode = asyncHandler(async (req, res, next) => {
 
     await map.save();
 
+    // Return updated node
+    const updatedNode = map.map_layers.id(layer_id).layer_nodes.id(node_id);
+
     res.status(200).json({
         success: true,
-        data: map.map_layers.id(layer_id),
+        data: updatedNode,
     });
 });
 

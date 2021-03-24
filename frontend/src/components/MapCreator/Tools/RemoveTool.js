@@ -1,21 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import Tool from './Tool';
+import { MapContext } from '../../../context/MapState';
+import { LayerGridContext } from '../../../context/LayerGridState';
+import { TOOLBAR_REMOVE } from '../../../actions/types';
 
-const RemoveTool = ({ onClick, map, toolBarState, removeNode }) => {
+const RemoveTool = ({ map, activeTool }) => {
+    // API Calls
+    const { deleteNode, workingMap } = useContext(MapContext);
+    const { workingLayer } = useContext(LayerGridContext);
+
     // Properties:
-    let id = 'Remove';
+    const id = 'Remove';
+    const toolType = TOOLBAR_REMOVE;
 
     // Listeners:
     const removeClick = () => {
-        map.current.on('click', clearNode);
+        map.current.on('click', executeTool);
     };
 
     const removeRemoveClick = () => {
-        map.current.removeEventListener('click', clearNode);
+        map.current.removeEventListener('click', executeTool);
     };
 
     // Main Tool Function:
-    const clearNode = (event) => {
+    const executeTool = async (event) => {
         var feature = event.map.forEachFeatureAtPixel(
             event.pixel,
             function (feature) {
@@ -23,22 +31,21 @@ const RemoveTool = ({ onClick, map, toolBarState, removeNode }) => {
             }
         );
         if (feature) {
-            console.log(feature.getId());
-            removeNode(feature.getId());
             map.current
                 .getLayers()
                 .array_[1].getSource()
                 .removeFeature(feature);
+            deleteNode(workingMap._id, workingLayer, feature.getId());
         }
     };
 
     // When State of Toolbar Changes:
     useEffect(() => {
-        if (map === null) {
+        if (map === null || map.current === null) {
             return;
         }
 
-        if (toolBarState[id] === true) {
+        if (activeTool === toolType) {
             removeClick();
         }
 
@@ -46,9 +53,9 @@ const RemoveTool = ({ onClick, map, toolBarState, removeNode }) => {
             removeRemoveClick();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [toolBarState]);
+    }, [activeTool]);
 
-    return <Tool id={id} onClick={onClick}></Tool>;
+    return <Tool id={id} toolType={toolType}></Tool>;
 };
 
 export default RemoveTool;

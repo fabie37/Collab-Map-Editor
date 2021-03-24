@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react';
+import { TOOLBAR_SELECT } from '../../../actions/types';
 import Tool from './Tool';
 
 const SelectTool = ({ onClick, map, toolBarState, selectNode }) => {
     // Properties:
-    let id = 'Select';
+    const id = 'Select';
+    const toolType = TOOLBAR_SELECT;
+
+    /*
 
     // Listeners:
     const selectClick = () => {
@@ -43,7 +47,9 @@ const SelectTool = ({ onClick, map, toolBarState, selectNode }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [toolBarState]);
 
-    return <Tool id={id} onClick={onClick}></Tool>;
+    */
+
+    return <Tool id={id} toolType={toolType}></Tool>;
 };
 
 export default SelectTool;
