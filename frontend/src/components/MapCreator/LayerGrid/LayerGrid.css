@@ -1,0 +1,25 @@
+.layergrid {
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    background-color: #7e7e7e00;
+    z-index: 99;
+    opacity: 100%;
+    align-self: baseline;
+    padding: 1em;
+    display: grid;
+    width: 85%;
+}
+
+.addbtn {
+    margin-top: 1em;
+    background: white;
+    border: none;
+    border-radius: 1em;
+    font-weight: 800;
+    padding-left: 1em;
+    padding-right: 1em;
+    justify-self: center;
+    box-shadow: 0 4px 6px 1px #757575;
+}

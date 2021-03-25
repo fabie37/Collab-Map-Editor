@@ -1,74 +1,95 @@
-const Node = require('../models/Node')
-const Map = require('../models/Map')
-const User = require('../models/User')
-const jwt = require('jsonwebtoken')
+const Map = require('../models/Map');
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('../middleware/async');
+const ErrorResponse = require('../utils/errorResponse');
 
-module.exports = {
-	createLayer(req, res) {
-        //check that user is logged in
-		jwt.verify(req.token, 'secret', async (err, authData) => {
-			if (err) {
-				res.statusCode(401)
-			} else {
-				const { layer_nodes, layer_description, start_date, end_date } = req.body
-                
-                const map_id = await Map.findById(req.body.map_id)
+// @desc    Create a layer given a map id
+// @route   POST  /api/v1/map/:id/layer/
+// @access  Private
+exports.createLayer = asyncHandler(async (req, res, next) => {
+    // Take out user data for layer
+    const { layer_nodes, layer_description, start_date, end_date } = req.body;
 
-				if (!map_id) {
-					return res.status(400).json({ message: 'Map does not exist!' })
-				}
+    // Middleware grabs map for us (see auth.js in middleware)
+    var map = req.map;
 
-				try {
-					const layer = await Layer.create({
-                        layer_nodes, 
-                        layer_description, 
-                        start_date, 
-                        end_date
-					})
+    const new_layer = map.map_layers.create({
+        map_id: req.params.id,
+        layer_nodes,
+        layer_description,
+        start_date,
+        end_date,
+    });
 
-					return res.json(layer)
-				} catch (error) {
-					return res.status(400).json({ message: error })
-				}
-			}
-		})
+    map.map_layers.push(new_layer);
 
-    },
-    
-    getLayerById(req, res) {
-		jwt.verify(req.token, 'secret', async (err, authData) => {
-			if (err) {
-				res.sendStatus(401)
-			} else {
-				const { layer_id } = req.params
-				try {
-					const layers = await Node.findById(layer_id)
+    await map.save();
 
-					if (layers) {
-						return res.json({ authData: authData, layers: layers })
-					}
-				} catch (error) {
-					return res.status(400).json({ message: 'layer_id does not exist!' })
-				}
-			}
+    res.status(200).json({
+        success: true,
+        data: new_layer,
+    });
+});
 
-		})
-	},
+// @desc    Get layers given a map id
+// @route   GET  /api/v1/map/:id/layer/
+// @access  Private
+exports.getLayersByMapId = asyncHandler(async (req, res, next) => {
+    // Middleware grabs map for us (see auth.js in middleware)
+    var map = req.map;
 
-	delete(req, res) {
-		jwt.verify(req.token, 'secret', async (err) => {
-			if (err) {
-				res.statusCode(401)
-			} else {
-				const { layer_id } = req.params
-				try {
-					await Layer.findByIdAndDelete(layer_id)
-					return res.status(204).send()
+    res.status(200).json({
+        success: true,
+        data: map.map_layers,
+    });
+});
 
-				} catch (error) {
-					return res.status(400).json({ message: 'No layer found with that id' })
-				}
-			}
-		})
-	}
-}
+// @desc    Update a layer given a map id
+// @route   PUT /api/v1/map/:id/layer/:layer_id/
+// @access  Private
+exports.updateLayer = asyncHandler(async (req, res, next) => {
+    // Get Layer id from param
+    const { layer_id } = req.params;
+
+    // Middleware grabs map for us (see auth.js in middleware)
+    var map = req.map;
+
+    // Get layer from map_layers
+    if (!map.map_layers.id(layer_id)) {
+        return next(new ErrorResponse('Resource not found.', 401));
+    }
+    map.map_layers.id(layer_id).set(req.body);
+
+    await map.save();
+
+    res.status(200).json({
+        success: true,
+        data: map.map_layers.id(layer_id),
+    });
+});
+
+// @desc    Delete layer given map id (body has layer id)
+// @route   DELETE  /api/v1/map/:id/layer/:layer_id/
+// @access  Private
+exports.deleteLayer = asyncHandler(async (req, res, next) => {
+    // Middleware grabs map for us (see auth.js in middleware)
+    var map = req.map;
+
+    // Get layer id from params
+    const { layer_id } = req.params;
+
+    if (!map.map_layers.id(layer_id)) {
+        return next(new ErrorResponse('Resource not found.', 401));
+    }
+
+    // Remove layer from map
+    const removedLayer = map.map_layers.id(layer_id);
+    map.map_layers.id(layer_id).remove();
+    await map.save();
+
+    res.status(200).json({
+        success: true,
+        data: removedLayer,
+    });
+});

@@ -1,9 +1,15 @@
-import React, { useState, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useRef, useContext, useEffect } from 'react';
 import './MapContainer.css';
 import Map from '../Map/Map';
 import ToolBar from '../ToolBar/ToolBar';
-import { v4 as uuid } from 'uuid';
+import InfoBar from '../InfoBar/InfoBar';
+import LayerGrid from '../LayerGrid/LayerGrid';
+import { AuthContext } from '../../../context/AuthState';
+import { MapContext } from '../../../context/MapState';
+import { MapModeContext } from '../../../context/MapModeState';
+import { LayerGridContext } from '../../../context/LayerGridState';
+import { InfoBarContext } from '../../../context/InfoBarState';
+import ModeToggle from '../ModeToggle/ModeToggle';
 
 const MapContainer = () => {
     // References to map
@@ -11,57 +17,66 @@ const MapContainer = () => {
     let map = useRef();
     let onNode = useRef(null);
 
-    // Toolbar Action State
-    let [toolBarState, setToolBarState] = useState({
-        Add: false,
-        Remove: false,
-        Move: false,
-    });
+    // Context
+    const { isAuthenticated } = useContext(AuthContext);
+    const {
+        workingMap,
+        createNode,
+        updateNode,
+        deleteNode,
+        createLayer,
+        updateLayer,
+        deleteLayer,
+    } = useContext(MapContext);
+    const { isEditMode } = useContext(MapModeContext);
+    const { workingLayer } = useContext(LayerGridContext);
+    const { selectedNode, setSelectedNode } = useContext(InfoBarContext);
 
-    // When a tool is clicked on
-    const setCurrentToolBar = (evt) => {
-        let toolBarStates = { Add: false, Remove: false, Move: false };
-        let target = evt.target.id;
-        toolBarStates[target] = true;
-        setToolBarState(toolBarStates);
-        console.log(toolBarStates);
+    // Code To Handle Viewing Nodes When in View Mode
+    // Listeners:
+    const selectClick = () => {
+        map.current.on('click', focusNode);
     };
 
-    // Node State
-    let [nodes, setNodes] = useState([]);
-
-    // Node Methods
-    const addNode = (coords) => {
-        const node = {
-            uid: uuid(),
-            coords: coords,
-        };
-
-        setNodes((oldlist) => [...oldlist, node]);
-        return node;
+    const removeSelectClick = () => {
+        map.current.removeEventListener('click', focusNode);
     };
 
-    const removeNode = (uid) => {
-        setNodes((oldlist) =>
-            oldlist.filter((node) => {
-                return node.uid != uid;
-            })
+    // Main View Function:
+    const focusNode = (event) => {
+        var feature = event.map.forEachFeatureAtPixel(
+            event.pixel,
+            function (feature) {
+                return feature;
+            }
         );
+
+        if (feature) {
+            setSelectedNode(feature.getId());
+        }
     };
+
+    // When Map Mode Changes
+    useEffect(() => {
+        if (map === null || map.curent === null) {
+            return;
+        }
+        if (!isEditMode) {
+            selectClick();
+        }
+        return () => {
+            removeSelectClick();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isEditMode]);
 
     return (
         <div className='map-container'>
-            <ToolBar
-                setTool={setCurrentToolBar}
-                map={map}
-                toolBarState={toolBarState}
-                addNode={addNode}
-                removeNode={removeNode}
-                nodes={nodes}
-                onNode={onNode}
-            ></ToolBar>
-            <div className='storyboard'></div>
+            <LayerGrid></LayerGrid>
+            <ModeToggle></ModeToggle>
+            {isEditMode && workingLayer && <ToolBar map={map}></ToolBar>}
             <Map map={map} mapRef={mapRef}></Map>
+            {selectedNode && <InfoBar></InfoBar>}
         </div>
     );
 };

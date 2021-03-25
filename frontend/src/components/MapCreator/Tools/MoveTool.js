@@ -1,10 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import Tool from './Tool';
 import Point from 'ol/geom/Point';
+import { toLonLat } from 'ol/proj';
+import { MapContext } from '../../../context/MapState';
+import { LayerGridContext } from '../../../context/LayerGridState';
+import { MAP_IS_LOADING, TOOLBAR_MOVE } from '../../../actions/types';
 
-const MoveTool = ({ onClick, map, toolBarState, onNode }) => {
+const MoveTool = ({ map, activeTool }) => {
+    // API Calls
+    const { updateNode, workingMap } = useContext(MapContext);
+    const { workingLayer } = useContext(LayerGridContext);
+
     // Properties:
-    let id = 'Move';
+    const id = 'Move';
+    const toolType = TOOLBAR_MOVE;
+
+    // Reference of Currently moving node
+    let onNode = useRef(null);
 
     // Listeners:
     const moveClick = () => {
@@ -40,16 +52,24 @@ const MoveTool = ({ onClick, map, toolBarState, onNode }) => {
     };
 
     const pointerMoveUp = (event) => {
+        if (onNode.current) {
+            const coordinates = toLonLat(
+                onNode.current.getGeometry().getCoordinates()
+            );
+            updateNode(workingMap._id, workingLayer, onNode.current.getId(), {
+                node_coordinates: coordinates,
+            });
+        }
         onNode.current = null;
     };
 
     // When State of Toolbar Changes:
     useEffect(() => {
-        if (map == null) {
+        if (map == null || map.current == null) {
             return;
         }
 
-        if (toolBarState[id] === true) {
+        if (activeTool === toolType) {
             moveClick();
         }
 
@@ -57,9 +77,9 @@ const MoveTool = ({ onClick, map, toolBarState, onNode }) => {
             removeMoveClick();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [toolBarState]);
+    }, [activeTool]);
 
-    return <Tool id={id} onClick={onClick}></Tool>;
+    return <Tool id={id} toolType={toolType}></Tool>;
 };
 
 export default MoveTool;

@@ -1,15 +1,26 @@
-import React from 'react';
-import { Container } from 'reactstrap'
+import React, { useContext, useEffect } from 'react';
 import Routes from './routes';
-import { ContextWrapper } from './user-context'
+import { ContextWrapper } from './user-context';
 import './App.css';
+import { AuthContext } from './context/AuthState';
+import { setAuthToken } from './services/setToken';
 
-function App() {
-  return (
-    <ContextWrapper>
-          <Routes />
-    </ContextWrapper>
-  );
+if (localStorage.token) {
+    setAuthToken(localStorage.token);
 }
+
+const App = () => {
+    const { loadUser } = useContext(AuthContext);
+
+    useEffect(() => {
+        loadUser();
+    }, []);
+
+    return (
+        <ContextWrapper>
+            <Routes />
+        </ContextWrapper>
+    );
+};
 
 export default App;

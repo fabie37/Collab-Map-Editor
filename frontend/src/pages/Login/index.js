@@ -1,74 +1,80 @@
 import React, { useState, useContext, useMemo } from 'react';
-import api from '../../services/api'
+import { Redirect } from 'react-router-dom';
 import { Alert, Container, Button, Form, FormGroup, Input } from 'reactstrap';
-import { UserContext } from '../../user-context'
-import './login.css'
+import { UserContext } from '../../user-context';
+import { AuthContext } from '../../context/AuthState';
+import './login.css';
 
 export default function Login({ history }) {
+    const { loginUser, isAuthenticated } = useContext(AuthContext);
     const { setIsloggedIn } = useContext(UserContext);
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("false")
-    const [profilePic, setProfilePic] = useState(null)
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('false');
 
-
-
-    const handleSubmit = async evt => {
+    const handleSubmit = async (evt) => {
         evt.preventDefault();
-        const response = await api.post('/login', { email, password })
-        const user_id = response.data.user_id || false;
-        const user = response.data.user || false;
-        const userName = response.data.userName || false;
-        const profilePic = response.data.profilePic || false;
-        
-        try {
-            if (user && user_id) {
-                localStorage.setItem('user', user)
-                localStorage.setItem('user_id', user_id)
-                localStorage.setItem('userName', userName)
-                localStorage.setItem('profilePic', profilePic)
-                setIsloggedIn(true)
-                history.push('/')
-            } else {
-                const { message } = response.data
-                setError(true)
-                setErrorMessage(message)
-                setTimeout(() => {
-                    setError(false)
-                    setErrorMessage("")
-                }, 2000)
-            }
-        } catch (error) {
-            setError(true)
-            setErrorMessage("Error, the server returned an error")
-        }
+
+        // API call here
+        await loginUser({ email, password });
+    };
+
+    // Redirect on authenticate.
+    if (isAuthenticated) {
+        return <Redirect to='/dashboard' />;
     }
 
     return (
         <Container>
-            <div className="content_login">
-            <h2>Login:</h2>
-            <p>Please <strong>Login</strong> into your account</p>
-            <Form onSubmit={handleSubmit} className="input-group">
-                <div className="input-group">
-                    <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
-                        <Input type="email" name="email" id="email" placeholder="Your email" onChange={evt => setEmail(evt.target.value)} />
+            <div className='content_login'>
+                <h2>Login:</h2>
+                <p>
+                    Please <strong>Login</strong> into your account
+                </p>
+                <Form onSubmit={handleSubmit} className='input-group'>
+                    <div className='input-group'>
+                        <FormGroup className='mb-2 mr-sm-2 mb-sm-2'>
+                            <Input
+                                type='email'
+                                name='email'
+                                id='email'
+                                placeholder='Your email'
+                                onChange={(evt) => setEmail(evt.target.value)}
+                            />
+                        </FormGroup>
+                        <FormGroup className='mb-2 mr-sm-2 mb-sm-2'>
+                            <Input
+                                type='password'
+                                name='password'
+                                id='password'
+                                placeholder='Your password'
+                                onChange={(evt) =>
+                                    setPassword(evt.target.value)
+                                }
+                            />
+                        </FormGroup>
+                    </div>
+                    <FormGroup>
+                        <Button className='submit-btn'>Submit</Button>
                     </FormGroup>
-                    <FormGroup className="mb-2 mr-sm-2 mb-sm-2">
-                        <Input type="password" name="password" id="password" placeholder="Your password" onChange={evt => setPassword(evt.target.value)} />
+                    <FormGroup>
+                        <Button
+                            className='secondary-btn'
+                            onClick={() => history.push('/register')}
+                        >
+                            New Account
+                        </Button>
                     </FormGroup>
-                </div>
-                <FormGroup>
-                    <Button className="submit-btn">Submit</Button>
-                </FormGroup>
-                <FormGroup>
-                    <Button className="secondary-btn" onClick={() => history.push("/register")}>New Account</Button>
-                </FormGroup>
-            </Form>
-            {error ? (
-                <Alert className="event-validation" color="danger"> {errorMessage}</Alert>
-            ) : ""}
+                </Form>
+                {error ? (
+                    <Alert className='event-validation' color='danger'>
+                        {' '}
+                        {errorMessage}
+                    </Alert>
+                ) : (
+                    ''
+                )}
             </div>
         </Container>
     );
