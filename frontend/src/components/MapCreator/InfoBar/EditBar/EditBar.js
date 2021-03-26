@@ -7,6 +7,7 @@ const EditBar = ({ setIsEditing }) => {
     return (
         <div className='editbar'>
             <button
+                id='EditItem'
                 className='action-btn'
                 onClick={() => {
                     setViewMode();

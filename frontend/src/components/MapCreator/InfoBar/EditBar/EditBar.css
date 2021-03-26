@@ -35,3 +35,6 @@
     background-color: black;
     color: white;
 }
+#EditItem:hover {
+    background-color: rgba(99, 85, 85, 0.199);
+}
