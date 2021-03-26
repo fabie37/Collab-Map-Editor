@@ -1,281 +1,106 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { api } from '../../services/api';
-import moment from 'moment';
+import React, { useContext, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import { api, config } from '../../services/api';
 import {
-    Button,
-    ButtonGroup,
-    Alert,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
     Container,
+    Card,
+    CardTitle,
+    CardBody,
+    CardText,
+    Button,
 } from 'reactstrap';
-import socketio from 'socket.io-client';
+import ItemCard from '../../components/ItemCard/ItemCard';
+import Spinner from '../../components/Spinner/Spinner';
+import { AuthContext } from '../../context/AuthState';
+import { MapContext } from '../../context/MapState';
 import './dashboard.css';
 
-export default function Dashboard({ history }) {
-    const [events, setEvents] = useState([]);
-    const user = localStorage.getItem('user');
-    const user_id = localStorage.getItem('user_id');
+const Dashboard = ({ history }) => {
+    // State
+    const { isAuthenticated } = useContext(AuthContext);
+    const {
+        userMaps,
+        getAllMaps,
+        getSingleMap,
+        deleteSingleMap,
+        isLoading,
+    } = useContext(MapContext);
 
-    const [rSelected, setRSelected] = useState(null);
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [messageHandler, setMessageHandler] = useState('');
-    const [eventsRequest, setEventsRequest] = useState([]);
-    const [dropdownOpen, setDropDownOpen] = useState(false);
-    const [eventRequestMessage, setEventRequestMessage] = useState('');
-    const [eventRequestSuccess, setEventRequestSuccess] = useState(false);
-
-    const toggle = () => setDropDownOpen(!dropdownOpen);
-
+    // On Render, Get user maps
     useEffect(() => {
-        getEvents();
+        if (isAuthenticated) {
+            getAllMaps();
+        }
     }, []);
 
-    const socket = useMemo(
-        () => socketio('http://localhost:8000/', { query: { user: user_id } }),
-        [user_id]
-    );
+    // Redirect on authenticate.
+    if (!isAuthenticated) {
+        return <Redirect to='/login' />;
+    }
 
-    useEffect(() => {
-        socket.on('registration_request', (data) =>
-            setEventsRequest([...eventsRequest, data])
-        );
-    }, [eventsRequest, socket]);
-
-    const filterHandler = (query) => {
-        setRSelected(query);
-        getEvents(query);
+    // Edit map functionality
+    const editMap = async (map_id) => {
+        await getSingleMap(map_id);
+        history.push('/mapeditor');
     };
 
-    const myEventsHandler = async () => {
-        try {
-            setRSelected('myevents');
-            const response = await api.get('/user/events', {
-                headers: { user },
-            });
-            setEvents(response.data.events);
-        } catch (error) {
-            history.push('/login');
-        }
-    };
-
-    const getEvents = async (filter) => {
-        try {
-            const url = filter ? `/dashboard/${filter}` : '/dashboard';
-            const response = await api.get(url, { headers: { user } });
-
-            setEvents(response.data.events);
-        } catch (error) {
-            history.push('/login');
-        }
-    };
-
-    const deleteEventHandler = async (eventId) => {
-        try {
-            await api.delete(`/event/${eventId}`, { headers: { user: user } });
-            setSuccess(true);
-            setMessageHandler('The event was deleted successfully!');
-            setTimeout(() => {
-                setSuccess(false);
-                filterHandler(null);
-                setMessageHandler('');
-            }, 2500);
-        } catch (error) {
-            setError(true);
-            setMessageHandler('Error when deleting event!');
-            setTimeout(() => {
-                setError(false);
-                setMessageHandler('');
-            }, 2000);
-        }
-    };
-
-    const registrationRequestHandler = async (event) => {
-        try {
-            await api.post(
-                `/registration/${event.id}`,
-                {},
-                { headers: { user } }
-            );
-            setSuccess(true);
-            setMessageHandler(
-                `The request for the event ${event.title} was successfully!`
-            );
-            setTimeout(() => {
-                setSuccess(false);
-                filterHandler(null);
-                setMessageHandler('');
-            }, 2500);
-        } catch (error) {
-            setError(true);
-            setMessageHandler(
-                `The request for the event ${event.title} wasn't successfully!`
-            );
-            setTimeout(() => {
-                setError(false);
-                setMessageHandler('');
-            }, 2000);
-        }
-    };
-
-    const acceptEventHandler = async (eventId) => {
-        try {
-            await api.post(
-                `/registration/${eventId}/approvals`,
-                {},
-                { headers: { user } }
-            );
-            setEventRequestSuccess(true);
-            setEventRequestMessage('Event approved successfully!');
-            removeNotificationFromDashboard(eventId);
-            setTimeout(() => {
-                setEventRequestSuccess(false);
-                setEventRequestMessage('');
-            }, 2000);
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
-    const rejectEventHandler = async (eventId) => {
-        try {
-            await api.post(
-                `/registration/${eventId}/rejections`,
-                {},
-                { headers: { user } }
-            );
-            setEventRequestSuccess(true);
-            setEventRequestMessage('Event rejected successfully!');
-            removeNotificationFromDashboard(eventId);
-            setTimeout(() => {
-                setEventRequestSuccess(false);
-                setEventRequestMessage('');
-            }, 2000);
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
-    const removeNotificationFromDashboard = (eventId) => {
-        const newEvents = eventsRequest.filter(
-            (event) => event._id !== eventId
-        );
-        setEventsRequest(newEvents);
-    };
+    // Delete Map from database - DISABLED FOR NOW
+    // const deleteMap = (map_id) => {
+    //     deleteSingleMap(map_id);
+    // };
 
     return (
-        <>
-            <Container>
-                <div className='content'>
-                    <div className='filter-panel'>
-                        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-                            <DropdownToggle color='primary' caret>
-                                Filter
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                <DropdownItem
-                                    onClick={() => filterHandler(null)}
-                                    active={rSelected === null}
-                                >
-                                    All Sports
-                                </DropdownItem>
-                                <DropdownItem
-                                    onClick={myEventsHandler}
-                                    active={rSelected === 'myevents'}
-                                >
-                                    My Events
-                                </DropdownItem>
-                                <DropdownItem
-                                    onClick={() => filterHandler('running')}
-                                    active={rSelected === 'running'}
-                                >
-                                    Running
-                                </DropdownItem>
-                                <DropdownItem
-                                    onClick={() => filterHandler('cycling')}
-                                    active={rSelected === 'cycling'}
-                                >
-                                    Cycling
-                                </DropdownItem>
-                                <DropdownItem
-                                    color='primary'
-                                    onClick={() => filterHandler('swimming')}
-                                    active={rSelected === 'swimming'}
-                                >
-                                    Swimming
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+        <Container>
+            <div className='my-maps__container'>
+                <div className='my-maps__title'>All Maps</div>
+                {isLoading ? (
+                    <Spinner></Spinner>
+                ) : (
+                    <div className='my-maps__cards-container'>
+                        {userMaps && userMaps.length != 0 ? (
+                            userMaps.map((map) => (
+                                <Card>
+                                    <CardBody>
+                                        <CardTitle tag='h2'>
+                                            {map.map_title}
+                                        </CardTitle>
+                                        <CardText>{map.map_type}</CardText>
+                                        {/* <Button
+                                            color='secondary'
+                                            onClick={() => {
+                                                deleteMap(map._id);
+                                            }}
+                                        >
+                                            Delete
+                                        </Button> */}
+                                        <Button
+                                            color='primary'
+                                            onClick={() => {
+                                                editMap(map._id);
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </CardBody>
+                                </Card>
+                            ))
+                        ) : (
+                            <h1>There are no maps to display</h1>
+                        )}
                     </div>
-                    <ul className='events-list'>
-                        {events.map((event) => (
-                            <li key={event._id}>
-                                <header
-                                    style={{
-                                        backgroundImage: `url(${event.thumbnail_url})`,
-                                    }}
-                                >
-                                    {event.user === user_id ? (
-                                        <div>
-                                            <Button
-                                                color='danger'
-                                                size='sm'
-                                                onClick={() =>
-                                                    deleteEventHandler(
-                                                        event._id
-                                                    )
-                                                }
-                                            >
-                                                Delete
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        ''
-                                    )}
-                                </header>
-                                <strong>{event.title}</strong>
-                                <span>
-                                    Event Date: {moment(event.date).format('l')}
-                                </span>
-                                <span>
-                                    Event Price:{' '}
-                                    {parseFloat(event.price).toFixed(2)}
-                                </span>
-                                <span>
-                                    Event Description: {event.description}
-                                </span>
-                                <Button
-                                    color='primary'
-                                    onClick={() =>
-                                        registrationRequestHandler(event)
-                                    }
-                                >
-                                    Registration Request
-                                </Button>
-                            </li>
-                        ))}
-                    </ul>
-                    {error ? (
-                        <Alert className='event-validation' color='danger'>
-                            {' '}
-                            {messageHandler}{' '}
-                        </Alert>
-                    ) : (
-                        ''
-                    )}
-                    {success ? (
-                        <Alert className='event-validation' color='success'>
-                            {' '}
-                            {messageHandler}
-                        </Alert>
-                    ) : (
-                        ''
-                    )}
-                </div>
-            </Container>
-        </>
+                )}
+            </div>
+        </Container>
     );
-}
+};
+
+export default Dashboard;
+
+/*<ItemCard
+title={map.map_title}
+subtitle={map.map_type}
+primaryName='Delete'
+primaryAction={() => deleteMap(map._id)}
+secondaryName='Edit'
+secondaryAction={() => editMap(map._id)}
+></ItemCard> */

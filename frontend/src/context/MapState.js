@@ -77,6 +77,21 @@ export const MapProvider = ({ children }) => {
         dispatch({ type: MAP_CREATE_RESET, payload: bool });
     }
 
+    // Get all maps
+    async function getAllMaps() {
+        if (localStorage.token) {
+            setAuthToken(localStorage.token);
+        }
+        dispatch({ type: MAP_IS_LOADING });
+        try {
+            const res = await api.get('/api/v1/dashboard/');
+            dispatch({ type: MAP_USER_GET_SUCCESS, payload: res.data });
+        } catch (error) {
+            alert(error.response.data.error);
+            dispatch({ type: MAP_USER_GET_FAILURE });
+        }
+    }
+
     // Getting all maps that belong to logged in user
     async function getUserMaps() {
         if (localStorage.token) {
@@ -288,6 +303,7 @@ export const MapProvider = ({ children }) => {
                 requestedNodes: state.requestedNodes,
                 createMap,
                 setMapCreated,
+                getAllMaps,
                 getUserMaps,
                 getSingleMap,
                 deleteSingleMap,

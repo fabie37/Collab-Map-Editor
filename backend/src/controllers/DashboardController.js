@@ -1,4 +1,5 @@
 const Event = require('../models/Event');
+const Map = require('../models/Map');
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
