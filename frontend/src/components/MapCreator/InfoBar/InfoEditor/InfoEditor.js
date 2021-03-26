@@ -15,14 +15,23 @@ const InfoEditor = ({ node }) => {
     const onSubmit = async (e) => {
         e.preventDefault();
         const nodeData = new FormData(e.target);
+
         const formData = {
             node_title: nodeData.get('node_title'),
             node_description: nodeData.get('node_description'),
             node_start_date: nodeData.get('node_start_date'),
         };
+
+        // Defaults node date to today
+        // if(formData.node_start_date === ""){
+        //     formData.node_start_date =moment().format('MM/DD/YYYY');
+        // }
+
         await updateNode(workingMap._id, workingLayer, selectedNode, formData);
         setViewMode();
     };
+
+    console.log(moment())
 
     return (
         <div className='info-editor'>
@@ -48,12 +57,11 @@ const InfoEditor = ({ node }) => {
                     />
                 </FormGroup>
                 <FormGroup>
-                    <Label for='node_start_date'>Description</Label>
+                    <Label for='node_start_date'>Date</Label>
                     <Input
                         type='date'
                         name='node_start_date'
                         id='node_start_date'
-                        defaultValue={moment().toString()}
                         // className='form-textbox'
                     />
                 </FormGroup>
