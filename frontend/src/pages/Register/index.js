@@ -11,11 +11,12 @@ import {
     Label,
 } from 'reactstrap';
 import { UserContext } from '../../user-context';
+import { Redirect } from 'react-router-dom';
 import './register.css';
 
 export default function Register({ history }) {
     const { createUser } = useContext(AuthContext);
-
+    const { isAuthenticated } = useContext(AuthContext);
     const { setIsloggedIn } = useContext(UserContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,6 +25,11 @@ export default function Register({ history }) {
 
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+
+    // Redirect on authenticate.
+    if (isAuthenticated) {
+        return <Redirect to='/' />;
+    }
 
     const handleSubmit = async (evt) => {
         evt.preventDefault();

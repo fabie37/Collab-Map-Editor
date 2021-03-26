@@ -22,7 +22,7 @@ export default function Login({ history }) {
 
     // Redirect on authenticate.
     if (isAuthenticated) {
-        return <Redirect to='/dashboard' />;
+        return <Redirect to='/' />;
     }
 
     return (
