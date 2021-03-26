@@ -84,7 +84,7 @@ const randomRGB = () => {
 io.on('connection', (socket) => {
     socket.color = randomRGB();
     socket.on('SEND_UPDATE', (map_id) => {
-        console.log('Something Updated');
+        console.log('User made an update.');
         socket.to(String(map_id).trim()).emit('GET_UPDATE', map_id);
     });
     socket.on('USER_WORKING', (map) => {
@@ -103,7 +103,7 @@ io.on('connection', (socket) => {
         }
     });
     socket.on('disconnect', () => {
-        console.log('Disconnected' + socket.mapID);
+        console.log('User Disconnected From Map:' + socket.mapID);
         socket.to(socket.mapID).emit('USER_LEFT', socket.userID);
     });
 });
