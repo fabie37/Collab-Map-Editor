@@ -9,8 +9,8 @@ const UserCursor = ({ connection, map }) => {
                 client.Y,
             ]);
             if (pixels != null) {
-                const x = (window.innerWidth / screen.X) * pixels[0];
-                const y = (window.innerHeight / screen.Y) * pixels[1];
+                const x = pixels[0];
+                const y = pixels[1];
 
                 return { top: y, left: x };
             }
