@@ -1,66 +1,64 @@
-const Event = require('../models/Event')
-const jwt = require('jsonwebtoken')
+const Event = require('../models/Event');
+const Map = require('../models/Map');
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('../middleware/async');
+const ErrorResponse = require('../utils/errorResponse');
 
-module.exports = {
-	getEventById(req, res) {
-		jwt.verify(req.token, 'secret', async (err, authData) => {
-			if (err) {
-				res.sendStatus(401)
-			} else {
-				const { eventId } = req.params
-				try {
-					const events = await Event.findById(eventId)
 
-					if (events) {
-						return res.json({ authData: authData, events: events })
-					}
-				} catch (error) {
-					return res.status(400).json({ message: 'EventId does not exist!' })
-				}
-			}
 
-		})
-	},
-	getAllEvents(req, res) {
-		jwt.verify(req.token, 'secret', async (err, authData) => {
-			if (err) {
-				res.sendStatus(401)
-			} else {
-				const { sport } = req.params
-				const query = sport ? { sport } : {}
+// @desc    Get all maps
+// @route   GET  /api/v1/dashboard/
+// @access  Private/User
+exports.getAllMaps = asyncHandler(async (req, res, next) => {
+    const maps = await Map.find({});
+    res.status(200).json({
+        sucess: true,
+        data: maps,
+    });
+});
 
-				try {
-					const events = await Event.find(query)
 
-					if (events) {
-						return res.json({ authData, events })
-					}
-				} catch (error) {
-					return res.status(400).json({ message: 'We do have any events yet' })
-				}
 
-			}
-		})
-	},
+// @desc    Get all events
+// @route   GET  /api/v1/dashboard/events/
+// @route   GET  /api/v1/dashboard/events/sport/:id
+// @access  Private
+exports.getEvents = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const query = id ? { id } : {};
+    console.log(query);
 
-	getEventsByUserId(req, res) {
-		jwt.verify(req.token, 'secret', async (err, authData) => {
-			if (err) {
-				res.sendStatus(401)
-			} else {
+    const events = await Event.find(query);
+    res.status(200).json({
+        success: true,
+        data: events,
+    });
+});
 
-				const { user_id } = req.headers
+// @desc    Get event by id
+// @route   GET  /api/v1/dashboard/events/:id
+// @access  Private
+exports.getEvent = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
 
-				try {
-					const events = await Event.find({ user: authData.user._id })
+    const events = await Event.findById(id);
 
-					if (events) {
-						return res.json({ authData, events })
-					}
-				} catch (error) {
-					return res.status(400).json({ message: `We do have any events with the user_id ${user_id}` })
-				}
-			}
-		})
-	}
-}
+    res.status(200).json({
+        success: true,
+        data: events,
+    });
+});
+
+// @desc    Get events by user id
+// @route   GET  /api/v1/dashboard/events/user/:id
+// @access  Private
+exports.getEventsByUserId = asyncHandler(async (req, res, next) => {
+    const { id } = req.headers;
+
+    const events = await Event.find({ user: authData.user._id });
+
+    res.status(200).json({
+        success: true,
+        data: events,
+    });
+});

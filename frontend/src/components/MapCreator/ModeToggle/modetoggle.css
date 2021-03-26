@@ -1,0 +1,19 @@
+.modetoggle {
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 3;
+    grid-column-end: 4;
+    z-index: 99;
+    opacity: 100%;
+    align-self: baseline;
+    justify-self: center;
+    padding: 1em;
+}
+
+.modetoggle-btn {
+    border: none;
+    border-radius: 1em;
+    padding: 1em;
+    background: white;
+    box-shadow: 0 4px 6px 1px #757575;
+}

@@ -1,3 +1,5 @@
 body.map_body {
     background: black;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }

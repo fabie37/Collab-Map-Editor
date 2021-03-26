@@ -1,28 +1,22 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import AddTool from '../Tools/AddTool';
+import RemoveTool from '../Tools/RemoveTool';
+import MoveTool from '../Tools/MoveTool';
+import SelectTool from '../Tools/SelectTool';
+import { ToolBarContext } from '../../../context/ToolbarState';
+
 import './ToolBar.css';
 
-function ToolBar({ setTool }) {
+function ToolBar({ map }) {
+    // ToolBar State
+    const { activeTool } = useContext(ToolBarContext);
+
     return (
         <div className='toolbar'>
-            <button className='toolbar-btn' id='addTool' onClick={setTool}>
-                Add
-            </button>
-            <button
-                className='toolbar-btn'
-                type='button'
-                id='removeTool'
-                onClick={setTool}
-            >
-                Remove
-            </button>
-            <button
-                className='toolbar-btn'
-                type='button'
-                id='moveTool'
-                onClick={setTool}
-            >
-                Move
-            </button>
+            <AddTool map={map} activeTool={activeTool}></AddTool>
+            <RemoveTool map={map} activeTool={activeTool}></RemoveTool>
+            <MoveTool map={map} activeTool={activeTool}></MoveTool>
+            <SelectTool map={map} activeTool={activeTool}></SelectTool>
         </div>
     );
 }

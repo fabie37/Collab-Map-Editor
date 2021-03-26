@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard renders correctly 1`] = `
+<div
+  className="container"
+>
+  <div
+    className="content"
+  >
+    <div
+      className="filter-panel"
+    >
+      <div
+        className="dropdown"
+        onKeyDown={[Function]}
+      >
+        <button
+          aria-expanded={false}
+          aria-haspopup={true}
+          aria-label={null}
+          className="dropdown-toggle btn btn-primary"
+          onClick={[Function]}
+          type="button"
+        >
+          Filter
+        </button>
+        <div
+          aria-hidden={true}
+          className="dropdown-menu"
+          role="menu"
+          tabIndex="-1"
+        >
+          <button
+            className="dropdown-item active"
+            onClick={[Function]}
+            role="menuitem"
+            tabIndex="0"
+            type="button"
+          >
+            All Sports
+          </button>
+          <button
+            className="dropdown-item"
+            onClick={[Function]}
+            role="menuitem"
+            tabIndex="0"
+            type="button"
+          >
+            My Events
+          </button>
+          <button
+            className="dropdown-item"
+            onClick={[Function]}
+            role="menuitem"
+            tabIndex="0"
+            type="button"
+          >
+            Running
+          </button>
+          <button
+            className="dropdown-item"
+            onClick={[Function]}
+            role="menuitem"
+            tabIndex="0"
+            type="button"
+          >
+            Cycling
+          </button>
+          <button
+            className="dropdown-item"
+            color="primary"
+            onClick={[Function]}
+            role="menuitem"
+            tabIndex="0"
+            type="button"
+          >
+            Swimming
+          </button>
+        </div>
+      </div>
+    </div>
+    <ul
+      className="events-list"
+    />
+    
+    
+  </div>
+</div>
+`;

@@ -1,0 +1,73 @@
+.layeritem {
+    padding: 0.5em;
+    border-radius: 1.25em;
+    overflow: hidden;
+
+    margin-top: 0.75em;
+
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-rows: 1fr;
+    cursor: pointer;
+    box-shadow: 0 4px 6px 1px #757575;
+}
+
+.layeritem-not-active {
+    background-color: white;
+}
+
+.layeritem-active {
+    background: rgb(99, 99, 99);
+    color: white;
+}
+
+.layeritem-working {
+    background: rgb(99, 99, 99);
+    color: white;
+}
+
+.layeritem-description {
+    font-size: 1em;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    align-self: center;
+    justify-self: start;
+    overflow: hidden;
+}
+
+.layeritem-edit {
+    justify-self: center;
+    align-self: center;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+.layeritem-edit:hover {
+    color: gray !important;
+}
+
+.layeritem-delete {
+    justify-self: center;
+    align-self: center;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 3;
+    grid-column-end: 3;
+}
+
+.layeritem-delete {
+    justify-self: center;
+    align-self: center;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    grid-column-start: 3;
+    grid-column-end: 3;
+}
+
+.layeritem-delete:hover {
+    color: red !important;
+}

@@ -1,0 +1,39 @@
+label#thumbnail {
+    margin-bottom: 20px;
+    border: 1px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+}
+
+label#thumbnail input {
+    display: none;
+}
+
+label#thumbnail.has-thumbnail {
+    border: 0;
+}
+
+label#thumbnail.has-thumbnail img {
+    display: none;
+}
+
+.container > .event-validation {
+    margin-top: 12px;
+}
+
+div.panel {
+    width: 50%;
+    opacity: 0.8;
+    background: #ffffff;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border-radius: 4px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}

@@ -108,4 +108,6 @@ dist
 
 files/
 
+package.json
+
 .DS_Store

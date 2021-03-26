@@ -1,138 +1,29 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import './Map.css';
 import * as ol from 'ol';
 import XYZ from 'ol/source/XYZ.js';
 import TileLayer from 'ol/layer/Tile.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import Interaction from 'ol/interaction';
-import Draw from 'ol/interaction/Draw';
-import Circle from 'ol/geom/Circle';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
+import * as olProj from 'ol/proj';
 import { Icon, Style } from 'ol/style';
-import { fromLonLat } from 'ol/proj';
-import { set } from 'ol/transform';
-import marker from './node.png';
-import { easeIn, easeOut } from 'ol/easing';
+import marker from '../Tools/node.png';
+import { MapContext } from '../../../context/MapState';
+import { MapModeContext } from '../../../context/MapModeState';
+import { LayerGridContext } from '../../../context/LayerGridState';
 
-const Map = ({
-    addTool,
-    removeTool,
-    moveTool,
-    addNode,
-    removeNode,
-    nodes,
-    children,
-}) => {
-    const mapRef = useRef();
-    let map = useRef();
-    let onNode = useRef(null);
-
-    // Map Listeners
-    // Add Nodes
-    const addClick = () => {
-        map.current.on('click', createNode);
-    };
-
-    const removeAddClick = () => {
-        map.current.removeEventListener('click', createNode);
-    };
-
-    const createNode = (event) => {
-        const newNode = addNode(event.coordinate);
-        var icon = new Feature({
-            geometry: new Point(newNode.coords),
-            id: newNode.uid,
-        });
-
-        icon.setId(newNode.uid);
-
-        icon.setStyle(
-            new Style({
-                image: new Icon({
-                    src: marker,
-                    scale: 0.1,
-                }),
-                fill: 'white',
-            })
-        );
-
-        map.current.getLayers().array_[1].getSource().addFeature(icon);
-        event.map.getView().animate({
-            center: event.coordinate,
-            duration: 200,
-            easing: easeIn,
-        });
-    };
-
-    // Remove nodes
-    const removeClick = () => {
-        map.current.on('click', clearNode);
-    };
-
-    const removeRemoveClick = () => {
-        map.current.removeEventListener('click', clearNode);
-    };
-
-    const clearNode = (event) => {
-        var feature = event.map.forEachFeatureAtPixel(
-            event.pixel,
-            function (feature) {
-                return feature;
-            }
-        );
-        console.log(map.current.getLayers().array_[1].getSource());
-        if (feature) {
-            removeNode(feature.getId());
-            map.current
-                .getLayers()
-                .array_[1].getSource()
-                .removeFeature(feature);
-        }
-    };
-
-    // Move Nodes
-    const moveClick = () => {
-        map.current.on('pointerdown', pointerMoveDown);
-        map.current.on('pointerdrag', moveNode);
-        map.current.on('pointerup', pointerMoveUp);
-    };
-
-    const removeMoveClick = () => {
-        map.current.removeEventListener('pointerdown', pointerMoveDown);
-        map.current.removeEventListener('pointerdrag', moveNode);
-        map.current.removeEventListener('pointerup', pointerMoveUp);
-    };
-
-    const moveNode = (event) => {
-        if (onNode.current) {
-            onNode.current.setGeometry(new Point(event.coordinate));
-        }
-    };
-
-    const pointerMoveDown = (event) => {
-        var feature = event.map.forEachFeatureAtPixel(
-            event.pixel,
-            function (feature) {
-                return feature;
-            }
-        );
-        if (feature) {
-            event.preventDefault();
-            onNode.current = feature;
-        }
-    };
-
-    const pointerMoveUp = (event) => {
-        onNode.current = null;
-    };
-
-    // Select Nodes
+const Map = ({ children, map, mapRef }) => {
+    const { createNode, deleteNode, workingMap } = useContext(MapContext);
+    const { workingLayer, selectedLayers } = useContext(LayerGridContext);
+    const { isEditMode } = useContext(MapModeContext);
 
     // Effect Hooks
     // Map Initialization: Runs only on initalisation
+    const user = localStorage.getItem('user');
     useEffect(() => {
+        // Configurations
         let options = {
             target: mapRef.current,
             view: new ol.View({ zoom: 0, center: [0, 0] }),
@@ -154,39 +45,194 @@ const Map = ({
         let mapObject = new ol.Map(options);
         map.current = mapObject;
 
+        map.current.on('pointermove', showCursorOnFeatureHover);
+
         return () => {
             mapObject.setTarget(undefined);
+            map.current.removeEventListener(showCursorOnFeatureHover);
         };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Find out what Tool is being used, if it changes, change the event listener
+    // Update Map Every Time we see a something change in the workingMap
     useEffect(() => {
-        console.log('addTool:' + addTool);
-        console.log('removeTool:' + removeTool);
-        console.log('moveTool:' + moveTool);
-
-        if (map == null) {
-            return;
+        if (workingMap && isEditMode) {
+            const foundLayer = workingMap.map_layers.find(
+                (layer) => layer._id == workingLayer
+            );
+            if (foundLayer) {
+                renderLayer(foundLayer);
+            } else {
+                clearMap();
+            }
+        } else if (workingMap) {
+            if (selectedLayers.length == 0) {
+                clearMap();
+            } else {
+                const layers = workingMap.map_layers.filter((layer) =>
+                    selectedLayers.includes(layer._id)
+                );
+                renderMultiLayers(layers);
+            }
         }
-        if (addTool) {
-            addClick();
-        }
+    }, [workingMap, workingLayer, selectedLayers]);
 
-        if (removeTool) {
-            removeClick();
-        }
+    // Clear all nodes from map
+    const clearMap = () => {
+        map.current.getLayers().array_[1].getSource().clear();
+    };
 
-        if (moveTool) {
-            moveClick();
-        }
-        return () => {
-            removeAddClick();
-            removeRemoveClick();
-            removeMoveClick();
-        };
-    }, [addTool, removeTool, moveTool]);
+    // Remove a layer
+    const removeLayer = (layer) => {
+        // Get all Currently rendered node
+        let currentlyLoadedFeatures = map.current
+            .getLayers()
+            .array_[1].getSource()
+            .getFeatures();
 
-    // JSX Return
+        // Map each rendered node
+        let featureMap = {};
+        currentlyLoadedFeatures.forEach((feature) => {
+            featureMap[feature.getId()] = feature;
+        });
+
+        // If rendered node id not in layer, remove it
+        let removeMap = {};
+        layer.layer_nodes.forEach((node) => {
+            if (featureMap[node._id]) {
+                removeMap[node._id] = featureMap[node._id];
+            }
+        });
+
+        // Remove Layer Nodes
+        for (const key in removeMap) {
+            map.current
+                .getLayers()
+                .array_[1].getSource()
+                .removeFeature(removeMap[key]);
+        }
+    };
+
+    // Load in an array of layers
+    const renderMultiLayers = (layers) => {
+        let currentlyLoadedFeatures = map.current
+            .getLayers()
+            .array_[1].getSource()
+            .getFeatures();
+
+        let featureMap = {};
+        currentlyLoadedFeatures.forEach((feature) => {
+            featureMap[feature.getId()] = feature;
+        });
+
+        layers.forEach((layer) => {
+            layer.layer_nodes.forEach((node) => {
+                // Check if node coordinates have changed
+                if (!featureMap[node._id]) {
+                    renderNode(node);
+                } else if (
+                    JSON.stringify(node.node_coordinates) !=
+                    JSON.stringify(
+                        olProj.toLonLat(
+                            featureMap[node._id].getGeometry().getCoordinates()
+                        )
+                    )
+                ) {
+                    map.current
+                        .getLayers()
+                        .array_[1].getSource()
+                        .removeFeature(featureMap[node._id]);
+                    renderNode(node);
+                    delete featureMap[node._id];
+                } else {
+                    delete featureMap[node._id];
+                }
+            });
+        });
+
+        for (const key in featureMap) {
+            map.current
+                .getLayers()
+                .array_[1].getSource()
+                .removeFeature(featureMap[key]);
+        }
+    };
+
+    // Load in a layer
+    const renderLayer = (layer) => {
+        let currentlyLoadedFeatures = map.current
+            .getLayers()
+            .array_[1].getSource()
+            .getFeatures();
+
+        let featureMap = {};
+        currentlyLoadedFeatures.forEach((feature) => {
+            featureMap[feature.getId()] = feature;
+        });
+
+        layer.layer_nodes.forEach((node) => {
+            if (!featureMap[node._id]) {
+                renderNode(node);
+            } else if (
+                JSON.stringify(node.node_coordinates) !=
+                JSON.stringify(
+                    olProj.toLonLat(
+                        featureMap[node._id].getGeometry().getCoordinates()
+                    )
+                )
+            ) {
+                map.current
+                    .getLayers()
+                    .array_[1].getSource()
+                    .removeFeature(featureMap[node._id]);
+                renderNode(node);
+                delete featureMap[node._id];
+            } else {
+                delete featureMap[node._id];
+            }
+        });
+
+        for (const key in featureMap) {
+            map.current
+                .getLayers()
+                .array_[1].getSource()
+                .removeFeature(featureMap[key]);
+        }
+    };
+
+    // Method For Creating a node
+    const renderNode = (node) => {
+        var icon = new Feature({
+            geometry: new Point(olProj.fromLonLat(node.node_coordinates)),
+            id: node._id,
+        });
+
+        icon.setId(node._id);
+
+        icon.setStyle(
+            new Style({
+                image: new Icon({
+                    src: marker,
+                    scale: 0.1,
+                }),
+                fill: 'white',
+            })
+        );
+        map.current.getLayers().array_[1].getSource().addFeature(icon);
+    };
+    // Show Cursor
+    const showCursorOnFeatureHover = (e) => {
+        var hit = e.map.hasFeatureAtPixel(e.pixel);
+        e.map.getViewport().style.cursor = hit ? 'pointer' : '';
+    };
+
+    function grn(min, max) {
+        var highlightedNumber = (Math.random() * (max - min) + min).toFixed(3);
+
+        return highlightedNumber;
+    }
+
     return (
         <div className='map' ref={mapRef}>
             {children}
