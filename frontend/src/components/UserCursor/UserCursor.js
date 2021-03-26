@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useEffect } from 'react';
 import './UserCursor.css';
 
 const UserCursor = ({ connection, map }) => {

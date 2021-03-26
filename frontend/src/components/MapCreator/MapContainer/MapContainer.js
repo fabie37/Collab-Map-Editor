@@ -34,7 +34,9 @@ const MapContainer = () => {
     const { isEditMode } = useContext(MapModeContext);
     const { workingLayer } = useContext(LayerGridContext);
     const { selectedNode, setSelectedNode } = useContext(InfoBarContext);
-    const { connections } = useContext(ConcurrentUsersContext);
+    const { connections, triggerConnectionRender } = useContext(
+        ConcurrentUsersContext
+    );
 
     // Code To Handle Viewing Nodes When in View Mode
     // Listeners:
@@ -73,6 +75,21 @@ const MapContainer = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isEditMode]);
+
+    // Handle User Nodes which get caught
+    const handleDrag = () => {
+        triggerConnectionRender();
+    };
+
+    useEffect(() => {
+        map.current.on('pointerdrag', handleDrag);
+        map.current.on('moveend', handleDrag);
+        console.log(map.current);
+        return () => {
+            map.current.un('pointerdrag', handleDrag);
+            map.current.un('moveend', handleDrag);
+        };
+    }, [map]);
 
     // When mouse moves, emit x,y pos to server
     const getUserXY = (e) => {

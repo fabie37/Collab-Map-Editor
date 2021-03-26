@@ -3,6 +3,7 @@ import {
     CONUSERS_CLEAR_CONTEXT,
     CONUSERS_SET_CONN_POS,
     CONUSERS_REMOVE_CONN,
+    CONUSERS_TRIGGER,
 } from '../actions/types';
 import ConcurrentUsersReducer from './ConcurrentUsersReducer';
 
@@ -31,6 +32,10 @@ export const ConccurentUserProvider = ({ children }) => {
         dispatch({ type: CONUSERS_SET_CONN_POS, payload: connection });
     }
 
+    function triggerConnectionRender() {
+        dispatch({ type: CONUSERS_TRIGGER });
+    }
+
     function removeConnection(user) {
         dispatch({ type: CONUSERS_REMOVE_CONN, payload: user });
     }
@@ -46,6 +51,7 @@ export const ConccurentUserProvider = ({ children }) => {
                 setConnectionPos,
                 removeConnection,
                 clearConcurrentUserState,
+                triggerConnectionRender,
             }}
         >
             {children}
