@@ -30,6 +30,7 @@ button {
     align-items: center;
     height: 100%;
     overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 .container::-webkit-scrollbar {
