@@ -2,6 +2,7 @@ import {
     CONUSERS_CLEAR_CONTEXT,
     CONUSERS_SET_CONN_POS,
     CONUSERS_REMOVE_CONN,
+    CONUSERS_TRIGGER,
 } from '../actions/types';
 
 // NOTE TO FUTURE SELF: YOU NEED TO HARD COPY VARIABLES IN ORDER TO FORCE A RERENDER IN OTHER WORDS DO newObj = [...oldOBJ]!
@@ -26,6 +27,9 @@ export default (state, action) => {
                     (conn) => conn._id != action.payload
                 ),
             };
+        case CONUSERS_TRIGGER:
+            const sameState = { ...state };
+            return sameState;
         default:
             return state;
     }
