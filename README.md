@@ -48,7 +48,7 @@ SOCKET_URI=http://localhost:3000
 SMTP_HOST=smtp.mailtrap.io
 
 
-SMTP_PORT=2525
+SMTP_PORT= {port}
 
 
 SMTP_EMAIL= {username}
