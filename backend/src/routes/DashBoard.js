@@ -6,8 +6,10 @@ const {
     getEvents,
     getEvent,
     getEventsByUserId,
+    getAllMaps
 } = require('../controllers/DashboardController');
 
+router.route('/').get( getAllMaps);
 router.route('/events/').get(verifyToken, getEvents);
 router.route('/events/sport/:id').get(verifyToken, getEvents);
 router.route('/events/:id').get(verifyToken, getEvent);

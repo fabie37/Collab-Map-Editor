@@ -3,6 +3,21 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 
+
+
+// @desc    Get all maps
+// @route   GET  /api/v1/dashboard/
+// @access  Private/User
+exports.getAllMaps = asyncHandler(async (req, res, next) => {
+    const maps = await Map.find({});
+    res.status(200).json({
+        sucess: true,
+        data: maps,
+    });
+});
+
+
+
 // @desc    Get all events
 // @route   GET  /api/v1/dashboard/events/
 // @route   GET  /api/v1/dashboard/events/sport/:id
