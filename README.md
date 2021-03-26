@@ -51,10 +51,10 @@ SMTP_HOST=smtp.mailtrap.io
 SMTP_PORT=2525
 
 
-SMTP_EMAIL=791958ac674b3c
+SMTP_EMAIL= {username}
 
 
-SMTP_PASSWORD=985ba8d6b3cb40
+SMTP_PASSWORD= {password}
 
 
 FROM_EMAIL=noreply@devcamper.io
