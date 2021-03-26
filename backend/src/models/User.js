@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'Please add an email'],
-        unique: true,
+        unique: [true, 'User is already registered'],
         match: [
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             'Please add a valid email',
@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'publisher'],
+        enum: ['user'],
         default: 'user',
     },
     password: {
@@ -28,6 +28,12 @@ const UserSchema = new mongoose.Schema({
         minlength: 6,
         select: false,
     },
+    groups: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Group',
+        },
+    ],
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     createdAt: {

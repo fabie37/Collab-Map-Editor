@@ -23,9 +23,7 @@ exports.createLayer = asyncHandler(async (req, res, next) => {
     });
 
     map.map_layers.push(new_layer);
-
     await map.save();
-
     res.status(200).json({
         success: true,
         data: new_layer,

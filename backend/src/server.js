@@ -12,7 +12,7 @@ const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const cors = require('cors');
-const socketio = require('socket.io');
+const { io } = require('./sockets/socket');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 
@@ -60,44 +60,45 @@ app.use(cors());
 // Set Static Folder
 app.use('/files', express.static(path.resolve(__dirname, '..', 'files')));
 
+// Create the server
+const server = http.createServer(app);
+
+// Socket io
+io.listen(server, {
+    cors: {
+        origin: '*',
+    },
+});
+io.on('connection', (socket) => {
+    socket.on('SEND_UPDATE', (map_id) => {
+        console.log('Something Updated');
+        socket.to(String(map_id).trim()).emit('GET_UPDATE', map_id);
+    });
+    socket.on('USER_WORKING', (map) => {
+        if (map) {
+            socket.rooms.forEach((room) => socket.leave(room));
+            socket.join(String(map._id).trim());
+            console.log(socket.rooms);
+        }
+    });
+});
+
 // Route Files
 const MapRouter = require('./routes/Map');
 const DashBoardRouter = require('./routes/DashBoard');
 const UserRouter = require('./routes/User');
 const AuthRouter = require('./routes/Auth');
+const GroupRouter = require('./routes/Group');
 
 // Mount Routers
 app.use('/api/v1/maps', MapRouter);
 app.use('/api/v1/dashboard', DashBoardRouter);
 app.use('/api/v1/user', UserRouter);
 app.use('/api/v1/auth', AuthRouter);
+app.use('/api/v1/group', GroupRouter);
 
 // Error Handler Middleware (after routes)
 app.use(errorHandler);
-
-// Create the server
-const server = http.createServer(app);
-
-// Socket io
-const io = require('socket.io')(server, {
-    cors: {
-        origin: '*',
-    },
-});
-
-app.use((req, res, next) => {
-    req.io = io;
-    req.connectUsers = connectUsers;
-    return next();
-});
-
-const connectUsers = {};
-
-io.on('connection', (socket) => {
-    const { user } = socket.handshake.query;
-
-    connectUsers[user] = socket.id;
-});
 
 // Start the server
 server.listen(PORT, () => {

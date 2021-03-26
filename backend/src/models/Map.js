@@ -51,6 +51,11 @@ const MapSchema = new mongoose.Schema({
         type: String,
         default: 'None',
     },
+    group: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Group',
+        default: null,
+    },
     is_public: Boolean,
 });
 

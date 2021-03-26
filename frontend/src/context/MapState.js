@@ -1,7 +1,9 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useReducer, useContext } from 'react';
 import MapReducer from './MapReducer';
 import { api, config } from '../services/api';
 import { setAuthToken } from '../services/setToken';
+import socket from '../services/socket';
+import { AuthContext } from '../context/AuthState';
 import {
     MAP_CREATE_FAILURE,
     MAP_CREATE_SUCCESS,
@@ -47,6 +49,8 @@ export const MapContext = createContext(initalState);
 // Provider
 export const MapProvider = ({ children }) => {
     const [state, dispatch] = useReducer(MapReducer, initalState);
+
+    const { user } = useContext(AuthContext);
 
     // Actions to send to dispatcher
 
@@ -111,6 +115,7 @@ export const MapProvider = ({ children }) => {
         dispatch({ type: MAP_IS_LOADING });
         try {
             const res = await api.delete(`/api/v1/maps/${map_id}`);
+            socket.emit('SEND_UPDATE', map_id);
             dispatch({ type: MAP_DELETE_SINGLE_SUCCESS, payload: res.data });
         } catch (error) {
             alert(error.response.data.error);
@@ -146,6 +151,7 @@ export const MapProvider = ({ children }) => {
                 body,
                 config
             );
+            socket.emit('SEND_UPDATE', map_id);
             dispatch({ type: LAYER_UPDATE_SUCCESS, payload: res.data });
         } catch (error) {
             alert(error.response.data.error);
@@ -166,6 +172,7 @@ export const MapProvider = ({ children }) => {
                 body,
                 config
             );
+            socket.emit('SEND_UPDATE', map_id);
             dispatch({ type: LAYER_CREATE_SUCCESS, payload: res.data });
         } catch (error) {
             alert(error.response.data.error);
@@ -183,6 +190,7 @@ export const MapProvider = ({ children }) => {
             const res = await api.delete(
                 `/api/v1/maps/${map_id}/layer/${layer_id}`
             );
+            socket.emit('SEND_UPDATE', map_id);
             dispatch({ type: LAYER_DELETE_SUCCESS, payload: res.data });
         } catch (error) {
             alert(error.response.data.error);
@@ -200,6 +208,7 @@ export const MapProvider = ({ children }) => {
             const res = await api.get(
                 `/api/v1/maps/${map_id}/layer/${layer_id}/node`
             );
+
             dispatch({ type: NODE_GET_BY_MAP_SUCCESS, payload: res.data });
         } catch (error) {
             alert(error.response.data.error);
@@ -220,6 +229,7 @@ export const MapProvider = ({ children }) => {
                 body,
                 config
             );
+            socket.emit('SEND_UPDATE', map_id);
             dispatch({ type: NODE_UPDATE_SUCCESS, payload: res.data });
         } catch (error) {
             alert(error.response.data.error);
@@ -240,6 +250,7 @@ export const MapProvider = ({ children }) => {
                 body,
                 config
             );
+            socket.emit('SEND_UPDATE', map_id);
             dispatch({ type: NODE_CREATE_SUCCESS, payload: res.data });
             return res.data.data;
         } catch (error) {
@@ -258,6 +269,7 @@ export const MapProvider = ({ children }) => {
             const res = await api.delete(
                 `/api/v1/maps/${map_id}/layer/${layer_id}/node/${node_id}`
             );
+            socket.emit('SEND_UPDATE', map_id);
             dispatch({ type: NODE_DELETE_SUCCESS, payload: res.data });
         } catch (error) {
             alert(error.response.data.error);
