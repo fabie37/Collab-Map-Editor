@@ -16,17 +16,25 @@ The ".env" file has to contain the following:
  
  
 SESSION_SECRET=secret
+
+
 MONGO_DB_CONNECTION= "connection link to your mongodb server"
 
 
 
 FILE_UPLOAD_PATH= ./public/uploads
+
+
 MAX_FILE_UPLOAD=1000000
 
 
 
 JWT_SECRET=4674236742trgefghf7635fe
+
+
 JWT_EXPIRE=30d
+
+
 JWT_COOKIE_EXPIRE=30
 
 
@@ -36,10 +44,20 @@ SOCKET_URI=http://localhost:3000
 
 
 SMTP_HOST=smtp.mailtrap.io
+
+
 SMTP_PORT=2525
+
+
 SMTP_EMAIL=791958ac674b3c
+
+
 SMTP_PASSWORD=985ba8d6b3cb40
+
+
 FROM_EMAIL=noreply@devcamper.io
+
+
 FROM_NAME=DevCamper
 
 
