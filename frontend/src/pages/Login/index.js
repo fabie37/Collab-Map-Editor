@@ -1,17 +1,15 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Alert, Container, Button, Form, FormGroup, Input } from 'reactstrap';
-import { UserContext } from '../../user-context';
 import { AuthContext } from '../../context/AuthState';
 import './login.css';
 
 export default function Login({ history }) {
     const { loginUser, isAuthenticated } = useContext(AuthContext);
-    const { setIsloggedIn } = useContext(UserContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('false');
+    const [error] = useState(false);
+    const [errorMessage] = useState('false');
 
     const handleSubmit = async (evt) => {
         evt.preventDefault();

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Spinner from '../../components/Spinner/Spinner';
 import {
     Alert,
@@ -18,9 +18,8 @@ export default function CreateMap({ history }) {
     const [map_type, setMapType] = useState('');
     const [is_public, setIsPublic] = useState(false);
 
-    const [thumbnail, setThumbnail] = useState(null);
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const [error] = useState(false);
+    const [success] = useState(false);
 
     const { isAuthenticated } = useContext(AuthContext);
     const { createMap, mapCreated, setMapCreated, isLoading } = useContext(

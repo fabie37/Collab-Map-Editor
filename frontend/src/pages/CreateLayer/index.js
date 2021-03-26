@@ -3,41 +3,32 @@ import { api } from '../../services/api';
 import {
     Alert,
     Container,
-    CustomInput,
     Button,
     Form,
     FormGroup,
     Input,
     Label,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
-    ButtonDropdown,
 } from 'reactstrap';
-import cameraIcon from '../../assets/camera.png';
 import './createmap.css';
 
 export default function CreateLayer({ history }) {
     // ATTRIBUTES ***********************************//
     const [map_id, setMapId] = useState('');
-    const [layer_nodes, setNodes] = useState([]);
+    const [layer_nodes] = useState([]);
     const [layer_description, setDescription] = useState('');
     const [start_date, setStartDate] = useState('');
     const [end_date, setEndDate] = useState('');
     // ATTRIBUTES ***********************************//
 
-    const [thumbnail, setThumbnail] = useState(null);
+    const [thumbnail] = useState(null);
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [dropdownOpen, setOpen] = useState(false);
     const user = localStorage.getItem('user');
-    const user_id = localStorage.getItem('user_id');
 
     useEffect(() => {
         if (!user) history.push('/login');
     }, []);
 
-    const toggle = () => setOpen(!dropdownOpen);
 
     const preview = useMemo(() => {
         return thumbnail ? URL.createObjectURL(thumbnail) : null;
@@ -80,10 +71,6 @@ export default function CreateLayer({ history }) {
 
     const map_id_Handler = async (evt) => {
         setMapId(evt.target.value);
-    };
-
-    const layer_nodes_Handler = async (evt) => {
-        setNodes(evt.target.value);
     };
 
     const layer_description_Handler = async (evt) => {

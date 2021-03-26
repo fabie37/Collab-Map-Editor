@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import { api, config } from '../../services/api';
 import {
     Container,
     Card,
@@ -9,7 +8,6 @@ import {
     CardText,
     Button,
 } from 'reactstrap';
-import ItemCard from '../../components/ItemCard/ItemCard';
 import Spinner from '../../components/Spinner/Spinner';
 import { AuthContext } from '../../context/AuthState';
 import { MapContext } from '../../context/MapState';
@@ -22,7 +20,6 @@ const Dashboard = ({ history }) => {
         userMaps,
         getAllMaps,
         getSingleMap,
-        deleteSingleMap,
         isLoading,
     } = useContext(MapContext);
 

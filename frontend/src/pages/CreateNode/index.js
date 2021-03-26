@@ -3,18 +3,12 @@ import { api } from '../../services/api';
 import {
     Alert,
     Container,
-    CustomInput,
     Button,
     Form,
     FormGroup,
     Input,
     Label,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
-    ButtonDropdown,
 } from 'reactstrap';
-import cameraIcon from '../../assets/camera.png';
 import './createmap.css';
 
 export default function CreateNode({ history }) {
@@ -23,29 +17,22 @@ export default function CreateNode({ history }) {
     const [node_layer_id, set_node_layer_id] = useState('');
     //const [node_user_id, set_node_user_id] = useState('')
     const [node_category, set_node_category] = useState('');
-    const [connected_nodes, set_connected_nodes] = useState([]);
 
-    const [node_coordinates, set_node_coordinates] = useState(['0', '0']);
-    const [node_coordinatesX, set_node_coordinatesX] = useState('');
-    const [node_coordinatesY, set_node_coordinatesY] = useState('');
+    const [node_coordinates] = useState(['0', '0']);
 
     const [node_start_date, set_node_start_date] = useState('');
     const [node_end_date, set_node_end_date] = useState('');
     const [node_description, set_node_description] = useState('');
     // ATTRIBUTES ***********************************//
 
-    const [thumbnail, setThumbnail] = useState(null);
+    const [thumbnail] = useState(null);
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [dropdownOpen, setOpen] = useState(false);
     const user = localStorage.getItem('user');
-    const user_id = localStorage.getItem('user_id');
 
     useEffect(() => {
         if (!user) history.push('/login');
     }, []);
-
-    const toggle = () => setOpen(!dropdownOpen);
 
     const preview = useMemo(() => {
         return thumbnail ? URL.createObjectURL(thumbnail) : null;
