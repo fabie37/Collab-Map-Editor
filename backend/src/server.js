@@ -69,17 +69,42 @@ io.listen(server, {
         origin: '*',
     },
 });
+
+// For RBG Colours
+const randomBetween = (min, max) =>
+    min + Math.floor(Math.random() * (max - min + 1));
+const randomRGB = () => {
+    const r = randomBetween(0, 255);
+    const g = randomBetween(0, 255);
+    const b = randomBetween(0, 255);
+    const rgb = `rgba(${r},${g}, ${b}, 0.45)`;
+    return rgb;
+};
+
 io.on('connection', (socket) => {
+    socket.color = randomRGB();
     socket.on('SEND_UPDATE', (map_id) => {
         console.log('Something Updated');
         socket.to(String(map_id).trim()).emit('GET_UPDATE', map_id);
     });
     socket.on('USER_WORKING', (map) => {
         if (map) {
+            socket.mapID = String(map).trim();
             socket.rooms.forEach((room) => socket.leave(room));
-            socket.join(String(map._id).trim());
-            console.log(socket.rooms);
+            socket.join(String(map).trim());
         }
+    });
+    socket.on('USER_MOVE', (client, screen, map, user) => {
+        if (map) {
+            socket.userID = user;
+            socket
+                .to(String(map).trim())
+                .emit('GET_POS', client, screen, map, user, socket.color);
+        }
+    });
+    socket.on('disconnect', () => {
+        console.log('Disconnected' + socket.mapID);
+        socket.to(socket.mapID).emit('USER_LEFT', socket.userID);
     });
 });
 

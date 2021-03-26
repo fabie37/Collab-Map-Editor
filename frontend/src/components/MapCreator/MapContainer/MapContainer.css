@@ -4,4 +4,6 @@
 
     grid-template-columns: 0.5fr 2fr 3fr 2fr 0.5fr;
     grid-template-rows: 3fr 1fr;
+    overflow: hidden;
+    overflow-x: hidden;
 }

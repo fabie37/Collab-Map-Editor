@@ -9,7 +9,10 @@ import { MapContext } from '../../../context/MapState';
 import { MapModeContext } from '../../../context/MapModeState';
 import { LayerGridContext } from '../../../context/LayerGridState';
 import { InfoBarContext } from '../../../context/InfoBarState';
+import { ConcurrentUsersContext } from '../../../context/ConcurrentUsersState';
 import ModeToggle from '../ModeToggle/ModeToggle';
+import socket from '../../../services/socket';
+import UserCursor from '../../UserCursor/UserCursor';
 
 const MapContainer = () => {
     // References to map
@@ -18,7 +21,7 @@ const MapContainer = () => {
     let onNode = useRef(null);
 
     // Context
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, user } = useContext(AuthContext);
     const {
         workingMap,
         createNode,
@@ -31,6 +34,7 @@ const MapContainer = () => {
     const { isEditMode } = useContext(MapModeContext);
     const { workingLayer } = useContext(LayerGridContext);
     const { selectedNode, setSelectedNode } = useContext(InfoBarContext);
+    const { connections } = useContext(ConcurrentUsersContext);
 
     // Code To Handle Viewing Nodes When in View Mode
     // Listeners:
@@ -70,10 +74,42 @@ const MapContainer = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isEditMode]);
 
+    // When mouse moves, emit x,y pos to server
+    const getUserXY = (e) => {
+        if (map && map.current) {
+            const times = e.target.dataset.mouseovertimes || 0;
+            if (times == 2) {
+                const coordinates = map.current.getCoordinateFromPixel([
+                    e.clientX,
+                    e.clientY,
+                ]);
+                socket.emit(
+                    'USER_MOVE',
+                    { X: coordinates[0], Y: coordinates[1] },
+                    { X: e.view.innerWidth, Y: e.view.innerHeight },
+                    workingMap._id,
+                    user._id
+                );
+                e.target.dataset.mouseovertimes = 0;
+            } else {
+                e.target.dataset.mouseovertimes = Number(times) + 1;
+            }
+        }
+    };
+
     return (
-        <div className='map-container'>
+        <div className='map-container' onMouseMove={getUserXY}>
             <LayerGrid></LayerGrid>
             <ModeToggle></ModeToggle>
+            {connections.map((conn, index) => {
+                return (
+                    <UserCursor
+                        map={map}
+                        index={index}
+                        connection={conn}
+                    ></UserCursor>
+                );
+            })}
             {isEditMode && workingLayer && <ToolBar map={map}></ToolBar>}
             <Map map={map} mapRef={mapRef}></Map>
             {selectedNode && <InfoBar></InfoBar>}
