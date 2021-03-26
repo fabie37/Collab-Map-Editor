@@ -128,8 +128,23 @@ const Map = ({ children, map, mapRef }) => {
 
         layers.forEach((layer) => {
             layer.layer_nodes.forEach((node) => {
+                // Check if node coordinates have changed
                 if (!featureMap[node._id]) {
                     renderNode(node);
+                } else if (
+                    JSON.stringify(node.node_coordinates) !=
+                    JSON.stringify(
+                        olProj.toLonLat(
+                            featureMap[node._id].getGeometry().getCoordinates()
+                        )
+                    )
+                ) {
+                    map.current
+                        .getLayers()
+                        .array_[1].getSource()
+                        .removeFeature(featureMap[node._id]);
+                    renderNode(node);
+                    delete featureMap[node._id];
                 } else {
                     delete featureMap[node._id];
                 }
@@ -159,6 +174,20 @@ const Map = ({ children, map, mapRef }) => {
         layer.layer_nodes.forEach((node) => {
             if (!featureMap[node._id]) {
                 renderNode(node);
+            } else if (
+                JSON.stringify(node.node_coordinates) !=
+                JSON.stringify(
+                    olProj.toLonLat(
+                        featureMap[node._id].getGeometry().getCoordinates()
+                    )
+                )
+            ) {
+                map.current
+                    .getLayers()
+                    .array_[1].getSource()
+                    .removeFeature(featureMap[node._id]);
+                renderNode(node);
+                delete featureMap[node._id];
             } else {
                 delete featureMap[node._id];
             }

@@ -32,7 +32,13 @@ exports.protect = asyncHandler(async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         console.log(decoded);
 
-        req.user = await User.findById(decoded.id);
+        // Tie up loose references
+        req.user = await User.findById(decoded.id).populate('groups');
+        const oldUser = await User.findById(decoded.id);
+        if (oldUser) {
+            oldUser.groups = req.user.groups.filter((group) => group != null);
+            oldUser.update();
+        }
 
         next();
     } catch (error) {
@@ -51,7 +57,12 @@ exports.protectMap = asyncHandler(async (req, res, next) => {
     const map_user_id = String(map.map_user_id).trim();
     const user_id = String(req.user._id).trim();
 
-    if (map_user_id !== user_id) {
+    // Check group of map and user and see if user is allowed to access this map
+    const in_group = req.user.groups.filter(
+        (group) => String(group._id).trim() == String(map.group).trim()
+    ).length;
+
+    if (map_user_id !== user_id && in_group == 0) {
         return next(
             new ErrorResponse('Not authorised to use this resource', 401)
         );
@@ -65,6 +76,7 @@ exports.protectMap = asyncHandler(async (req, res, next) => {
 // Grant acces to specific roles
 exports.authorize = (...roles) => {
     return (req, res, next) => {
+        console.log(req.user);
         if (!roles.includes(req.user.role)) {
             return next(
                 new ErrorResponse(
