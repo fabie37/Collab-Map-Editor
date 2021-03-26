@@ -4,6 +4,7 @@ import { InfoBarContext } from '../../../../context/InfoBarState';
 import { LayerGridContext } from '../../../../context/LayerGridState';
 import { MapContext } from '../../../../context/MapState';
 import './InfoEditor.css';
+import moment from 'moment';
 
 const InfoEditor = ({ node }) => {
     // Map API Calls
@@ -17,6 +18,7 @@ const InfoEditor = ({ node }) => {
         const formData = {
             node_title: nodeData.get('node_title'),
             node_description: nodeData.get('node_description'),
+            node_start_date: nodeData.get('node_start_date'),
         };
         await updateNode(workingMap._id, workingLayer, selectedNode, formData);
         setViewMode();
@@ -43,6 +45,16 @@ const InfoEditor = ({ node }) => {
                         id='node_description'
                         defaultValue={node.node_description}
                         className='form-textbox'
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <Label for='node_start_date'>Description</Label>
+                    <Input
+                        type='date'
+                        name='node_start_date'
+                        id='node_start_date'
+                        defaultValue={moment().toString()}
+                        // className='form-textbox'
                     />
                 </FormGroup>
             </Form>
