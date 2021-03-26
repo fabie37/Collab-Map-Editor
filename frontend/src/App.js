@@ -27,7 +27,9 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        socket.emit('USER_WORKING', workingMap);
+        if (workingMap) {
+            socket.emit('USER_WORKING', workingMap);
+        }
     }, [workingMap]);
 
     return (
