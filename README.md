@@ -80,6 +80,9 @@ run both frontend and backend separately with command: npm run dev
 To download dependencies, type "npm install" in both frontend and backend folders.
 
 
+To run unit tests, type "npm run test" in frontend folder.
+
+
 ---
 ## Usage
 >
