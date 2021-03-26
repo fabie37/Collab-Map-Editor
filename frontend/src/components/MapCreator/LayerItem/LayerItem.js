@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import './LayerItem.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import { Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, Button } from 'reactstrap';
+import { Form, FormGroup, Label, Input } from 'reactstrap';
 
 function LayerItem({
     isEditMode,

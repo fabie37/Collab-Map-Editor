@@ -13,8 +13,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import SideNav, {
-    Toggle,
-    Nav,
     NavItem,
     NavIcon,
     NavText,
@@ -134,7 +132,7 @@ export default function TopNav() {
                     </NavItem>
                 </NavItem>
 
-                <NavItem eventKey='map' id='NavItem'>
+                {/* <NavItem eventKey='map' id='NavItem'>
                     <NavIcon id='NavIcon'>
                         <FontAwesomeIcon
                             icon={faWrench}
@@ -143,7 +141,7 @@ export default function TopNav() {
                         />
                     </NavIcon>
                     <NavText id='NavText'>Map Prototype</NavText>
-                </NavItem>
+                </NavItem> */}
             </SideNav.Nav>
         </SideNav>
     );

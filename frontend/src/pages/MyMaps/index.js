@@ -8,7 +8,6 @@ import {
     CardText,
     Button,
 } from 'reactstrap';
-import ItemCard from '../../components/ItemCard/ItemCard';
 import Spinner from '../../components/Spinner/Spinner';
 import { AuthContext } from '../../context/AuthState';
 import { MapContext } from '../../context/MapState';

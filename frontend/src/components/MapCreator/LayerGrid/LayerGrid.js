@@ -5,8 +5,8 @@ import { LayerGridContext } from '../../../context/LayerGridState';
 import { MapModeContext } from '../../../context/MapModeState';
 import { ToolBarContext } from '../../../context/ToolbarState';
 import { InfoBarContext } from '../../../context/InfoBarState';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import { Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, Button } from 'reactstrap';
+import { Form, FormGroup, Label, Input } from 'reactstrap';
 import './LayerGrid.css';
 
 const LayerGrid = () => {

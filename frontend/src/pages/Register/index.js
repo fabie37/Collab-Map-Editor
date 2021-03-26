@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import { api } from '../../services/api';
 import { AuthContext } from '../../context/AuthState';
 import {
     Button,
@@ -8,7 +7,6 @@ import {
     Container,
     Input,
     Alert,
-    Label,
 } from 'reactstrap';
 import { UserContext } from '../../user-context';
 import { Redirect } from 'react-router-dom';

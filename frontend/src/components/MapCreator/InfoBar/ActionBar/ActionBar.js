@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { InfoBarContext } from '../../../../context/InfoBarState';
 import { MapContext } from '../../../../context/MapState';
 import { LayerGridContext } from '../../../../context/LayerGridState';

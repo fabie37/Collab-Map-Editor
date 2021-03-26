@@ -1,26 +1,13 @@
-import React, { useEffect, useState, useMemo, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
-import { api } from '../../services/api';
-import moment from 'moment';
 import {
-    Button,
-    ButtonGroup,
     Alert,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
     Container,
 } from 'reactstrap';
-import socketio from 'socket.io-client';
 import { AuthContext } from '../../context/AuthState';
 import './profile.css';
 
 export default function Profile({ history }) {
-    const [events, setEvents] = useState([]);
-    const [userName, setUserName] = useState('');
-    const [profilePic, setProfilePic] = useState('');
-    const [rSelected, setRSelected] = useState(null);
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [messageHandler, setMessageHandler] = useState('');
