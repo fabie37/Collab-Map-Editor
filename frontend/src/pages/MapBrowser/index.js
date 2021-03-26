@@ -1,166 +1,106 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { api } from '../../services/api';
-import moment from 'moment';
+import React, { useContext, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import { api, config } from '../../services/api';
 import {
-    Button,
-    ButtonGroup,
-    Alert,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
     Container,
+    Card,
+    CardTitle,
+    CardBody,
+    CardText,
+    Button,
 } from 'reactstrap';
-import socketio from 'socket.io-client';
+import ItemCard from '../../components/ItemCard/ItemCard';
+import Spinner from '../../components/Spinner/Spinner';
+import { AuthContext } from '../../context/AuthState';
+import { MapContext } from '../../context/MapState';
 import './mapbrowser.css';
 
-export default function MapBrowser({ history }) {
-    const [maps, setMaps] = useState([]);
-    const user = localStorage.getItem('user');
-    const user_id = localStorage.getItem('user_id');
+const MapBrowser = ({ history }) => {
+    // State
+    const { isAuthenticated } = useContext(AuthContext);
+    const {
+        userMaps,
+        getAllMaps,
+        getSingleMap,
+        deleteSingleMap,
+        isLoading,
+    } = useContext(MapContext);
 
-    const [rSelected, setRSelected] = useState(null);
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [messageHandler, setMessageHandler] = useState('');
-    const [eventsRequest, setEventsRequest] = useState([]);
-    const [dropdownOpen, setDropDownOpen] = useState(false);
-    const [eventRequestMessage, setEventRequestMessage] = useState('');
-    const [eventRequestSuccess, setEventRequestSuccess] = useState(false);
-
-    const toggle = () => setDropDownOpen(!dropdownOpen);
-
+    // On Render, Get user maps
     useEffect(() => {
-        getMaps();
+        if (isAuthenticated) {
+            getAllMaps();
+        }
     }, []);
 
-    const socket = useMemo(
-        () => socketio('http://localhost:8000/', { query: { user: user_id } }),
-        [user_id]
-    );
+    // Redirect on authenticate.
+    if (!isAuthenticated) {
+        return <Redirect to='/login' />;
+    }
 
-    const filterHandler = (query) => {
-        setRSelected(query);
-        getMaps(query);
+    // Edit map functionality
+    const editMap = async (map_id) => {
+        await getSingleMap(map_id);
+        history.push('/mapeditor');
     };
 
-    const myEventsHandler = async () => {
-        try {
-            setRSelected('myevents');
-            const response = await api.get('/user/events', {
-                headers: { user },
-            });
-            setMaps(response.data.events);
-        } catch (error) {
-            history.push('/login');
-        }
-    };
-
-    const getMaps = async (filter) => {
-        try {
-            const url = filter ? `/mapbrowser/${filter}` : '/mapbrowser';
-            const response = await api.get(url, { headers: { user } });
-            console.log(response.data.maps[0]);
-            setMaps(response.data.maps);
-        } catch (error) {
-            history.push('/login');
-        }
-    };
-
-    const deleteEventHandler = async (eventId) => {
-        try {
-            await api.delete(`/event/${eventId}`, { headers: { user: user } });
-            setSuccess(true);
-            setMessageHandler('The event was deleted successfully!');
-            setTimeout(() => {
-                setSuccess(false);
-                filterHandler(null);
-                setMessageHandler('');
-            }, 2500);
-        } catch (error) {
-            setError(true);
-            setMessageHandler('Error when deleting event!');
-            setTimeout(() => {
-                setError(false);
-                setMessageHandler('');
-            }, 2000);
-        }
-    };
+    // Delete Map from database - DISABLED FOR NOW
+    // const deleteMap = (map_id) => {
+    //     deleteSingleMap(map_id);
+    // };
 
     return (
-        <>
-            <Container>
-                <div className='content'>
-                    <div className='filter-panel'>
-                        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-                            <DropdownToggle color='primary' caret>
-                                Filter
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                <DropdownItem
-                                    onClick={() => filterHandler(null)}
-                                    active={rSelected === null}
-                                >
-                                    All Sports
-                                </DropdownItem>
-                                <DropdownItem
-                                    onClick={myEventsHandler}
-                                    active={rSelected === 'myevents'}
-                                >
-                                    My Events
-                                </DropdownItem>
-                                <DropdownItem
-                                    onClick={() => filterHandler('running')}
-                                    active={rSelected === 'running'}
-                                >
-                                    Running
-                                </DropdownItem>
-                                <DropdownItem
-                                    onClick={() => filterHandler('cycling')}
-                                    active={rSelected === 'cycling'}
-                                >
-                                    Cycling
-                                </DropdownItem>
-                                <DropdownItem
-                                    color='primary'
-                                    onClick={() => filterHandler('swimming')}
-                                    active={rSelected === 'swimming'}
-                                >
-                                    Swimming
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+        <Container>
+            <div className='my-maps__container'>
+                <div className='my-maps__title'>All Maps</div>
+                {isLoading ? (
+                    <Spinner></Spinner>
+                ) : (
+                    <div className='my-maps__cards-container'>
+                        {userMaps && userMaps.length != 0 ? (
+                            userMaps.map((map) => (
+                                <Card>
+                                    <CardBody>
+                                        <CardTitle tag='h2'>
+                                            {map.map_title}
+                                        </CardTitle>
+                                        <CardText>{map.map_type}</CardText>
+                                        {/* <Button
+                                            color='secondary'
+                                            onClick={() => {
+                                                deleteMap(map._id);
+                                            }}
+                                        >
+                                            Delete
+                                        </Button> */}
+                                        <Button
+                                            color='primary'
+                                            onClick={() => {
+                                                editMap(map._id);
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </CardBody>
+                                </Card>
+                            ))
+                        ) : (
+                            <h1>There are no maps to display</h1>
+                        )}
                     </div>
-                    <ul className='maps-list'>
-                        {maps.map((map) => (
-                            <li key={map._id}>
-                                <strong>Map title: </strong>
-                                {map.map_title}
-                                <strong>Map type: </strong>
-                                {map.map_type}
-                                <strong>Map public?: </strong>
-                                {map.is_public.toString()}
-                            </li>
-                        ))}
-                    </ul>
-                    {error ? (
-                        <Alert className='event-validation' color='danger'>
-                            {' '}
-                            {messageHandler}{' '}
-                        </Alert>
-                    ) : (
-                        ''
-                    )}
-                    {success ? (
-                        <Alert className='event-validation' color='success'>
-                            {' '}
-                            {messageHandler}
-                        </Alert>
-                    ) : (
-                        ''
-                    )}
-                </div>
-            </Container>
-        </>
+                )}
+            </div>
+        </Container>
     );
-}
+};
+
+export default MapBrowser;
+
+/*<ItemCard
+title={map.map_title}
+subtitle={map.map_type}
+primaryName='Delete'
+primaryAction={() => deleteMap(map._id)}
+secondaryName='Edit'
+secondaryAction={() => editMap(map._id)}
+></ItemCard> */
