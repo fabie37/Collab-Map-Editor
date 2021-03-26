@@ -3,6 +3,45 @@ div.my-maps__cards-container{
     overflow-y:scroll;
 }
 
-Card{
-    width: 200px;
+.card-style{
+    width: 500px;
+    background-color: rgb(226, 226, 226);
+}
+
+.card-title{
+    font-size: 20px;
+    font-weight: 500;
+}
+
+body {
+    background: white !important;
+}
+
+.container{
+    width: 100vw;
+}
+
+.allmaps-container {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 25% auto;
+    align-content: baseline;
+    height: 100%;
+    width: 100%;
+}
+
+.allmaps-title {
+    grid-row: 1;
+    padding: 1em 1em 1em 1em;
+    color: black;
+    font-size: 3em;
+    align-self: baseline;
+}
+
+.allmaps-cards-container {
+    padding: 1em 1em 1em 1em;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 2fr));
+    justify-items: center;
+    grid-gap: 60px 60px;
 }

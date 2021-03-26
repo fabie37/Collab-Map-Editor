@@ -50,18 +50,18 @@ const Dashboard = ({ history }) => {
     // };
 
     return (
-        <Container>
-            <div className='my-maps__container'>
-                <div className='my-maps__title'>All Maps</div>
+        <Container className="container">
+            <div className='allmaps-container'>
+                <div className='allmaps-title'>All Maps</div>
                 {isLoading ? (
                     <Spinner></Spinner>
                 ) : (
-                    <div className='my-maps__cards-container'>
+                    <div className='allmaps-cards-container'>
                         {userMaps && userMaps.length != 0 ? (
                             userMaps.map((map) => (
-                                <Card>
+                                <Card className="card-style">
                                     <CardBody>
-                                        <CardTitle tag='h2'>
+                                        <CardTitle className="card-title">
                                             {map.map_title}
                                         </CardTitle>
                                         <CardText>{map.map_type}</CardText>
